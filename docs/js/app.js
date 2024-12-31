@@ -142,9 +142,23 @@ function init_selectors() {
     }
 }
 
+function init_depots() {
+    depots_data.forEach(depot => {
+        if(depot.geometry) {
+            if(depot.geometry) {
+                depot.polygon = turf.polygon(depot.geometry);
+                for(const geometry of depot.geometry) {
+                    L.polygon(geometry).addTo(map);
+                }
+            }
+        }
+    });
+}
+
 window.onload = async () => {
     await init_routes_tables();
     init_map();
+    init_depots();
     init_websocket();
     init_selectors();
 

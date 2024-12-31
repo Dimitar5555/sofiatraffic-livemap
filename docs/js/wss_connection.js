@@ -23,6 +23,14 @@ function init_websocket() {
     };
 }
 
+function is_vehicle_in_depot(type, coords) {
+    return depots_data.some(depot => 
+        depot.polygon
+        && (depot.type == type || depot.type.includes(type))
+        && turf.booleanPointInPolygon(coords, depot.polygon)
+    )
+}
+
 function add_to_cache(vehicle, timestamp) {
     function is_fake_trolley(type, inv_number) {
         const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505]];
@@ -40,13 +48,17 @@ function add_to_cache(vehicle, timestamp) {
         'tram': 'TM'
     };
     const cgm_id = `${cgm_types[type]}${vehicle.line}`;
-    const route_ref = routes.find(route => route.cgm_id === cgm_id)?.route_ref;
+    let route_ref = routes.find(route => route.cgm_id === cgm_id)?.route_ref;
     if(is_fake_trolley(type, inv_number)) {
         type = 'bus';
         // Avoid conflicts between Tramkar ebuses and Malashevtsi buses
         if(2501 <= inv_number && inv_number <= 2505) {
             inv_number *= 10;
         }
+    }
+
+    if(is_vehicle_in_depot(type, coords)) {
+        route_ref = null;
     }
 
     let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
@@ -91,10 +103,6 @@ function add_to_cache(vehicle, timestamp) {
 
         cache_entry.geo.bearing = calculate_bearing(cache_entry.geo);
         cache_entry.geo.speed = calculate_speed(cache_entry.geo);
-        
-        if(cache_entry.route_ref == '94' && cache_entry.inv_number == 2032) {
-            console.log(cache_entry.geo.speed);
-        }
 
         if(route_ref != cache_entry.route_ref) {
             to_return = `${type}/${cache_entry.route_ref};`;
