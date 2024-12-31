@@ -237,6 +237,7 @@ function populate_route_table(relevant_vehicles, tbody, type) {
         // tr.setAttribute('data-type', type);
         {
             let td = document.createElement('td');
+            td.classList.add('text-center', 'align-middle', 'lh-100')
             td.innerText = proper_inv_number(vehicle.inv_number);
             tr.appendChild(td);
         }

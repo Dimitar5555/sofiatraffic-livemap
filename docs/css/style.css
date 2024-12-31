@@ -54,3 +54,7 @@
     overflow-y: auto;
     max-height: 800px; /* Same height as the map */
 }
+
+.lh-100 {
+    line-height: 100%;
+}
