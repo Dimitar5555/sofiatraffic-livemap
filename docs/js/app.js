@@ -149,8 +149,8 @@ window.onload = async () => {
     init_selectors();
 
     setTimeout(() => {
-        document.querySelector('#remove_after_30s').remove();
-    }, 30 * 1000);
+        document.querySelector('#remove_after_20s').remove();
+    }, 20 * 1000);
 };
 
 const bg_type = {
