@@ -1,0 +1,56 @@
+:root {
+    --tram-colour: #f6921e;
+    --trolley-colour: #0095da;
+    --bus-colour: #be1e2d;
+    
+    --marker-outer-size: 25px;
+    --marker-inner-size: 9px;
+    --top-right-distance-inner-dot: calc((var(--marker-outer-size) - var(--marker-inner-size)) / 2);
+}
+
+#map {
+    /* width: 1800px; */
+    height: 850px;
+}
+
+.vehicle-tram > svg {
+    fill: var(--tram-colour);
+}
+
+.vehicle-trolley > svg {
+    fill: var(--trolley-colour);;
+}
+
+.vehicle-bus > svg {
+    fill: var(--bus-colour);;
+}
+
+.tram-bg-color {
+	background-color: var(--tram-colour) !important;
+}
+.trolley-bg-color {
+	background-color: var(--trolley-colour) !important;
+}
+.bus-bg-color {
+	background-color: var(--bus-colour) !important;
+}
+
+.text-light {
+    color: #fff;
+}
+
+.d-none {
+    display: none;
+}
+
+.left-col {
+    max-height: 850px;
+    flex-shrink: 0;
+
+}
+
+.table-container {
+    flex-shrink: 1;
+    overflow-y: auto;
+    max-height: 800px; /* Same height as the map */
+}
