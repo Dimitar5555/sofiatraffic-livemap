@@ -31,6 +31,15 @@ function is_vehicle_in_depot(type, coords) {
     )
 }
 
+function is_second_wagon(inv_number) {
+    return tram_compositions.some(tc => tc[1] == inv_number);
+}
+
+function get_second_wagon_of(inv_number) {
+    const result = tram_compositions.find(tc => tc[0] == inv_number);
+    return result?result[1]:false;
+}
+
 function add_to_cache(vehicle, timestamp) {
     function is_fake_trolley(type, inv_number) {
         const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505]];
@@ -40,6 +49,9 @@ function add_to_cache(vehicle, timestamp) {
 	//normalise tags
 
     let inv_number = Number(vehicle.vehicleId.replace(/[a-z]/gi, ''));
+    if(is_second_wagon(inv_number)) {
+        return '';
+    }
     const coords = [vehicle.latitude, vehicle.longitude];
     let type = vehicle.vehicleType;
     cgm_types = {
@@ -54,6 +66,13 @@ function add_to_cache(vehicle, timestamp) {
         // Avoid conflicts between Tramkar ebuses and Malashevtsi buses
         if(2501 <= inv_number && inv_number <= 2505) {
             inv_number *= 10;
+        }
+    }
+    
+    if(type == 'tram') {
+        const second_wagon = get_second_wagon_of(inv_number);
+        if(second_wagon) {
+            inv_number = `${inv_number}+${second_wagon}`;
         }
     }
 
