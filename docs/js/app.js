@@ -166,7 +166,7 @@ function update_map_vehicle(new_vehicle) {
     }
     let vehicle_state = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?'active':'passive';
     let vehicle_icon = marker_icons[new_vehicle.type][vehicle_state];
-    let popup_text = `${bg_type[new_vehicle.type]} ${proper_inv_number(new_vehicle.inv_number)} на ${new_vehicle.route_ref}<br>Speed: ${new_vehicle.geo.speed} km/h`;
+    let popup_text = `${bg_type[new_vehicle.type]} ${proper_inv_number(new_vehicle.inv_number)} на ${new_vehicle.route_ref}<br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h`;
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(!vehicle_marker) {
         vehicle_marker = L.marker(new_lat_lon, {icon: vehicle_icon}).bindPopup(popup_text).addTo(map);
