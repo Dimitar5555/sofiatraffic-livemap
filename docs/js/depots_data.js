@@ -181,6 +181,7 @@ const depots_data = [
         id: 7,
         type: 'trolley',
         name: 'Левски',
+        hide: true,
         is_depot_vehicle: (n) => false,
         geometry: [
             [
