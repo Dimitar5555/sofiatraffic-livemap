@@ -4,32 +4,74 @@ const MIN_ACTIVE_SPEED = 10;
 var websocket_connection = null;
 cache = [];
 
-function init_map() {
-    map = L.map('map', {
-        center: [42.69671, 23.32129],
-        zoom: 13
-    });
-    map.invalidateSize();
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+function get_marker(state, vehicle_type, route_ref) {
+    const width = 35; // initial 25px
+    const half_width = width/2;
+    const height = 57.4; // initial 41px
+    const inner_circle_radius = 13; // initial 4.75px
 
-    let icon_data = {
-        passive: {
-            iconSize: [25, 25],
-            iconAnchor: [12.5, 12.5],
-            popupAnchor: [0, -12.5],
-            html: '<svg width="25" height="25" xmlns="http://www.w3.org/2000/svg"><circle cx="12.5" cy="12.5" r="12.5"/><circle cx="12.5" cy="12.5" r="4.75" fill="#fff"/></svg>'
-        },
-        active: {
-            iconSize: [25, 41],
-            //iconAnchor: [12.5, 41],
-            iconAnchor: [12.5, 12.5],
-            popupAnchor: [12.5, -2],
-            rotationOrigin: '12.5px 12.5px',
-            html: '<svg width="25" height="41" xmlns="http://www.w3.org/2000/svg"><circle cx="12.5" cy="12.5" r="12.5"/><polygon points="1.75,18.75 23.25,18.75 12.5,41" /><circle cx="12.5" cy="12.5" r="4.75" fill="#fff"/></svg>',
+    const icon_anchor = [width/2, width/2];
+
+    const passive_popup_anchor = [0, -width/2];
+    const active_popup_anchor = [width/2, -2];
+
+    const triangle_acute_point = `${half_width},${height}`;
+    const triangle_side_margin = 1.75;
+    const triangle_left_point = `${triangle_side_margin},18.75`;
+    const triangle_right_point = `${width-triangle_side_margin},18.75`;
+
+    let class_name;
+    if(route_ref != null) {
+        const route_ref_length = route_ref.toString().length;
+        if(route_ref_length <= 2) {
+            class_name = 'large';
+        }
+        else {
+            class_name = 'small';
         }
     }
 
-    marker_icons = {
+
+    const open_svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+    const outer_circle = `<circle cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
+    const inner_circle = `<circle cx="${half_width}" cy="${half_width}" r="${inner_circle_radius}" fill="#fff"/>`;
+    const triangle = `<polygon points="${triangle_left_point} ${triangle_right_point} ${triangle_acute_point}"/>`;
+
+    const style = `<style>.text { font-weight: bold; font-family: sans-serif; fill: #000; text-align: center } .small { font-size: 10px; } .large { font-size: 16px; }</style>`;
+    const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="text ${class_name}" transform="rotate(0)" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
+    const close_svg = '</svg>';
+
+    let icon_data = {
+        passive: {
+            iconSize: [width, width],
+            iconAnchor: icon_anchor,
+            popupAnchor: passive_popup_anchor,
+            html: `${open_svg}${style}${outer_circle}${inner_circle}${text}${close_svg}`
+        },
+        active: {
+            iconSize: [width, height],
+            //iconAnchor: [12.5, 41],
+            iconAnchor: icon_anchor,
+            popupAnchor: active_popup_anchor,
+            rotationOrigin: icon_anchor.map(a => a+' px').join(' '),
+            html: `${open_svg}${style}${outer_circle}${triangle}${inner_circle}${text}${close_svg}`,
+        }
+    }
+    let options = {
+        iconSize: icon_data[state].iconSize,
+        iconAnchor: icon_data[state].iconAnchor,
+        popupAnchor: icon_data[state].popupAnchor,
+        html: icon_data[state].html,
+        className: `${vehicle_type}-vehicle`
+    }
+    if(state == 'active') {
+        options.rotationOrigin = icon_data[state].rotationOrigin;
+    }
+
+
+    const marker = L.divIcon(options);
+
+    const marker_icons = {
         tram: {
             active: L.divIcon({
                 iconSize: icon_data.active.iconSize,
@@ -84,7 +126,20 @@ function init_map() {
             })      
             
         }
-};
+    };
+
+    return marker_icons[vehicle_type][state];
+}
+
+function init_map() {
+    map = L.map('map', {
+        center: [42.69671, 23.32129],
+        zoom: 13
+    });
+    map.invalidateSize();
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?{foo}', {foo: 'bar', attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+
+    
 }
 var routes;
 function init_routes_tables() {
@@ -173,7 +228,7 @@ function update_map_vehicle(new_vehicle) {
         vehicle_marker = new_vehicle.marker;
     }
     let vehicle_state = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?'active':'passive';
-    let vehicle_icon = marker_icons[new_vehicle.type][vehicle_state];
+    let vehicle_icon = get_marker(vehicle_state, new_vehicle.type, new_vehicle.route_ref);
     let popup_text = `<div class="text-center">${proper_inv_number(new_vehicle.inv_number)} на <span class="${get_route_classes(new_vehicle.type).join(' ')}">${bg_types[new_vehicle.type]} ${new_vehicle.route_ref??"N/A"}</span><br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h</div>`;
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(!vehicle_marker) {
@@ -194,6 +249,8 @@ function update_map_vehicle(new_vehicle) {
     vehicle_marker.setLatLng(new_lat_lon);
     let bearing = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?(new_vehicle.geo.bearing?new_vehicle.geo.bearing-180:0):0;
     vehicle_marker.setRotationAngle(bearing);
+    vehicle_marker.getElement().querySelector('text').setAttribute('transform', `rotate(${-bearing})`);
+
     //vehicle_marker.setRotationOrigin('bottom center')
 }
 
