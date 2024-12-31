@@ -169,7 +169,13 @@ function update_map_vehicle(new_vehicle) {
     let popup_text = `${bg_type[new_vehicle.type]} ${proper_inv_number(new_vehicle.inv_number)} на ${new_vehicle.route_ref}<br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h`;
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(!vehicle_marker) {
-        vehicle_marker = L.marker(new_lat_lon, {icon: vehicle_icon}).bindPopup(popup_text).addTo(map);
+        const marker_options = {
+            icon: vehicle_icon,
+        }
+        const popup_options = {
+            className : 'fs-5'
+        }        
+        vehicle_marker = L.marker(new_lat_lon, marker_options).bindPopup(popup_text, popup_options).addTo(map);
         new_vehicle.marker = vehicle_marker;
     }
     else {
