@@ -77,9 +77,9 @@ const depots_data = [
     },
     {
         id: 3,
-        type: 'tram',
+        type: ['tram', 'bus'],
         name: 'Красно село',
-        is_depot_vehicle: () => false,
+        is_depot_vehicle: (inv_number) => 25010 <= inv_number && inv_number <= 25050,
         geometry: [
             [
                 [42.6761833, 23.2797674],
