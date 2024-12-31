@@ -153,12 +153,6 @@ window.onload = async () => {
     }, 20 * 1000);
 };
 
-const bg_type = {
-    'tram': 'Трамвай',
-    'trolley': 'Тролей',
-    'bus': 'Автобус'
-}
-
 function update_map_vehicle(new_vehicle) {
     let vehicle_marker = false;
     if(new_vehicle.marker) {
