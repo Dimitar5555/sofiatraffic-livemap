@@ -166,7 +166,7 @@ function update_map_vehicle(new_vehicle) {
     }
     let vehicle_state = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?'active':'passive';
     let vehicle_icon = marker_icons[new_vehicle.type][vehicle_state];
-    let popup_text = `${bg_type[new_vehicle.type]} ${proper_inv_number(new_vehicle.inv_number)} на ${new_vehicle.route_ref}<br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h`;
+    let popup_text = `${proper_inv_number(new_vehicle.inv_number)} на <span class="${get_route_classes(new_vehicle.type).join(' ')}">${bg_types[new_vehicle.type]} ${new_vehicle.route_ref??"N/A"}</span><br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h`;
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(!vehicle_marker) {
         const marker_options = {
@@ -187,6 +187,21 @@ function update_map_vehicle(new_vehicle) {
     //vehicle_marker.setRotationOrigin('bottom center')
 }
 
+const bg_types = {
+    'tram': 'Трамвай',
+    'trolley': 'Тролей',
+    'bus': 'Автобус'
+};
+
+function get_route_classes(type) {
+    return [`${type}-bg-color`, 'text-light', 'px-2'];
+}
+
+function set_route_classes(el, type, route_ref) {
+    el.classList.add(...get_route_classes(type), 'text-center');
+    el.innerText = `${bg_types[type]} ${route_ref}`;
+}
+
 function generate_route_table(type, route_ref) {
     let tbody = document.createElement('tbody');
     tbody.setAttribute('id', `${type}_${route_ref}`);
@@ -194,8 +209,7 @@ function generate_route_table(type, route_ref) {
     {
         let tr = document.createElement('tr');
         let th = document.createElement('th');
-        th.classList.add(`${type}-bg-color`, 'text-light', 'px-2', 'text-center')
-        th.innerText = `${bg_type[type]} ${route_ref}`;
+        set_route_classes(th, type, route_ref);
         th.colSpan = 2;
         tr.appendChild(th);
         tbody.appendChild(tr);
