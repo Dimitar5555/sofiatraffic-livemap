@@ -62,73 +62,13 @@ function get_marker(state, vehicle_type, route_ref) {
         iconAnchor: icon_data[state].iconAnchor,
         popupAnchor: icon_data[state].popupAnchor,
         html: icon_data[state].html,
-        className: `${vehicle_type}-vehicle`
+        className: `vehicle-${vehicle_type}`
     }
     if(state == 'active') {
         options.rotationOrigin = icon_data[state].rotationOrigin;
     }
-
-
     const marker = L.divIcon(options);
-
-    const marker_icons = {
-        tram: {
-            active: L.divIcon({
-                iconSize: icon_data.active.iconSize,
-                iconAnchor: icon_data.active.iconAnchor,
-                popupAnchor: icon_data.active.popupAnchor,
-                rotationOrigin: icon_data.active.rotationOrigin,
-                html: icon_data.active.html,
-                className: 'vehicle-tram'
-            }),
-            passive: L.divIcon({
-                iconSize: icon_data.passive.iconSize,
-                iconAnchor: icon_data.passive.iconAnchor,
-                popupAnchor: icon_data.passive.popupAnchor,
-                html: icon_data.passive.html,
-                className: 'vehicle-tram'
-            })      
-            
-        },
-        trolley: {
-            active: L.divIcon({
-                iconSize: icon_data.active.iconSize,
-                iconAnchor: icon_data.active.iconAnchor,
-                popupAnchor: icon_data.active.popupAnchor,
-                rotationOrigin: icon_data.active.rotationOrigin,
-                html: icon_data.active.html,
-                className: 'vehicle-trolley'
-            }),
-            passive: L.divIcon({
-                iconSize: icon_data.passive.iconSize,
-                iconAnchor: icon_data.passive.iconAnchor,
-                popupAnchor: icon_data.passive.popupAnchor,
-                html: icon_data.passive.html,
-                className: 'vehicle-trolley'
-            })      
-            
-        },
-        bus: {
-            active: L.divIcon({
-                iconSize: icon_data.active.iconSize,
-                iconAnchor: icon_data.active.iconAnchor,
-                popupAnchor: icon_data.active.popupAnchor,
-                rotationOrigin: icon_data.active.rotationOrigin,
-                html: icon_data.active.html,
-                className: 'vehicle-bus'
-            }),
-            passive: L.divIcon({
-                iconSize: icon_data.passive.iconSize,
-                iconAnchor: icon_data.passive.iconAnchor,
-                popupAnchor: icon_data.passive.popupAnchor,
-                html: icon_data.passive.html,
-                className: 'vehicle-bus'
-            })      
-            
-        }
-    };
-
-    return marker_icons[vehicle_type][state];
+    return marker;
 }
 
 function init_map() {
