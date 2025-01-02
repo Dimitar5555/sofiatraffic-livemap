@@ -41,6 +41,10 @@ function get_second_wagon_of(inv_number) {
 }
 
 function add_to_cache(vehicle, timestamp) {
+    if(vehicle.latitude == 0 && vehicle.longitude == 0) {
+        // Ignore vehicles with invalid coordinates
+        return '';
+    }
     function is_fake_trolley(type, inv_number) {
         const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505]];
         let is_inv_in_range = inv_ranges.some(([lower_bound, upper_bound]) => lower_bound <= inv_number && inv_number <= upper_bound);
