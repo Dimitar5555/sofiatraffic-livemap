@@ -73,6 +73,15 @@ function get_icon({type, route_ref, geo: { speed }}) {
     return icon;
 }
 
+function register_vehicle_view(type, inv_number, is_marker=false) {
+    console.log(`view_vehicle: ${type} ${inv_number}`);
+    gtag('event', 'view_vehicle', {
+        'event_category': 'vehicle',
+        'event_label': `${type} ${inv_number}`,
+        'value': is_marker
+    });
+}
+
 function init_map() {
     map = L.map('map', {
         center: [42.69671, 23.32129],
@@ -175,7 +184,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
     }
     let has_marker = new_vehicle.marker != null;
     let vehicle_marker = false;
-    let vehicle_icon = get_marker(new_vehicle);
+    let vehicle_icon = get_icon(new_vehicle);
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(has_marker) {
         vehicle_marker = new_vehicle.marker;
@@ -189,8 +198,13 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
             className : 'fs-5',
             closeButton: false,
             maxWidth: 350
-        }        
-        vehicle_marker = L.marker(new_lat_lon, marker_options).bindPopup(popup_text, popup_options).addTo(map);
+        }
+        vehicle_marker = L.marker(new_lat_lon, marker_options)
+        .bindPopup(popup_text, popup_options)
+        .addTo(map)
+        .on('click', () => {
+            register_vehicle_view(new_vehicle.type, new_vehicle.inv_number, true);
+        });
         new_vehicle.marker = vehicle_marker;
     }
     
@@ -278,6 +292,7 @@ function zoom_to_vehicle(type, inv_number) {
     let marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
     marker.openPopup();
     map.flyTo(marker._latlng, 17);
+    register_vehicle_view(type, inv_number);
 }
 
 function update_route_table(type, route_ref) {
