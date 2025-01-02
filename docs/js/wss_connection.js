@@ -87,6 +87,10 @@ function add_to_cache(vehicle, timestamp) {
     let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
     
     let to_return = '';
+    let changed_state = false;
+    let changed_bearing = false;
+    let changed_route = false;
+    let changed_speed = false;
     if(!cache_entry) {
         cache_entry = {
             inv_number,
@@ -109,6 +113,7 @@ function add_to_cache(vehicle, timestamp) {
         if(route_ref) {
             to_return = `${type}/${route_ref}`;
         }
+        changed_route = true;
     }
     else {
         const same_timestamp = cache_entry.geo.curr.timestamp === timestamp;
@@ -124,15 +129,37 @@ function add_to_cache(vehicle, timestamp) {
         cache_entry.geo.curr.coords[1] = coords[1];
         cache_entry.geo.curr.timestamp = timestamp;
 
-        cache_entry.geo.bearing = calculate_bearing(cache_entry.geo);
-        cache_entry.geo.speed = calculate_speed(cache_entry.geo);
+        let old_bearing = cache_entry.geo.bearing;
+        let new_bearing = calculate_bearing(cache_entry.geo);
+        if(old_bearing !== new_bearing) {
+            changed_bearing = true;
+            cache_entry.geo.bearing = new_bearing;
+        }
+
+
+        let old_speed = cache_entry.geo.speed;
+        let new_speed = calculate_speed(cache_entry.geo);
+        if(old_speed !== new_speed) {
+            let was_active = old_speed > MIN_ACTIVE_SPEED;
+            let is_active = new_speed > MIN_ACTIVE_SPEED;
+            changed_state = was_active !== is_active;
+            cache_entry.geo.speed = new_speed;
+            changed_speed = true;
+            if(!is_active) {
+                cache_entry.geo.bearing = 0;
+            }
+        }
 
         if(route_ref != cache_entry.route_ref) {
             to_return = `${type}/${cache_entry.route_ref};`;
             cache_entry.route_ref = route_ref;
             to_return += `${type}/${route_ref}`;
+            changed_route = true;
         }
     }
-    update_map_vehicle(cache_entry);
+    if(changed_state) {
+        changed_bearing = true;
+    }
+    update_map_vehicle(cache_entry, changed_state, changed_bearing, changed_route, changed_speed);
     return to_return;
 }

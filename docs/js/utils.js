@@ -35,7 +35,7 @@ function calculate_bearing(geo) {
 			Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
 	let brng = Math.atan2(y, x);
 	brng = toDegrees(brng);
-	return Math.round(brng);
+	return Math.round(brng)-180;
 }
 
 function calculate_speed(geo) {

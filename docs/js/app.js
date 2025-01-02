@@ -4,7 +4,9 @@ const MIN_ACTIVE_SPEED = 10;
 var websocket_connection = null;
 cache = [];
 
-function get_marker(state, vehicle_type, route_ref) {
+function get_marker({type, route_ref, geo: { speed }}) {
+    const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
+
     const width = 35; // initial 25px
     const half_width = width/2;
     const height = 57.4; // initial 41px
@@ -62,7 +64,7 @@ function get_marker(state, vehicle_type, route_ref) {
         iconAnchor: icon_data[state].iconAnchor,
         popupAnchor: icon_data[state].popupAnchor,
         html: icon_data[state].html,
-        className: `vehicle-${vehicle_type}`
+        className: `vehicle-${type}`
     }
     if(state == 'active') {
         options.rotationOrigin = icon_data[state].rotationOrigin;
@@ -162,16 +164,24 @@ window.onload = async () => {
     }, 20 * 1000);
 };
 
-function update_map_vehicle(new_vehicle) {
+function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route, changed_speed) {
+    function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
+        const to_return = '<div class="text-center">'
+        + `${proper_inv_number(inv_number)} на <span class="${get_route_classes(type).join(' ')}">${bg_types[type]} ${route_ref}</span><br>`
+        + `<i class="bi bi-speedometer"></i>: ${speed} km/h`
+        + '</div>';
+
+        return to_return;
+    }
+    let has_marker = new_vehicle.marker != null;
     let vehicle_marker = false;
-    if(new_vehicle.marker) {
+    let vehicle_icon = get_marker(new_vehicle);
+    let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
+    if(has_marker) {
         vehicle_marker = new_vehicle.marker;
     }
-    let vehicle_state = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?'active':'passive';
-    let vehicle_icon = get_marker(vehicle_state, new_vehicle.type, new_vehicle.route_ref);
-    let popup_text = `<div class="text-center">${proper_inv_number(new_vehicle.inv_number)} на <span class="${get_route_classes(new_vehicle.type).join(' ')}">${bg_types[new_vehicle.type]} ${new_vehicle.route_ref??"N/A"}</span><br><i class="bi bi-speedometer"></i>: ${new_vehicle.geo.speed} km/h</div>`;
-    let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
-    if(!vehicle_marker) {
+    else {
+        let popup_text = generate_popup_text(new_vehicle);
         const marker_options = {
             icon: vehicle_icon,
         }
@@ -183,14 +193,29 @@ function update_map_vehicle(new_vehicle) {
         vehicle_marker = L.marker(new_lat_lon, marker_options).bindPopup(popup_text, popup_options).addTo(map);
         new_vehicle.marker = vehicle_marker;
     }
-    else {
-        vehicle_marker.setIcon(vehicle_icon).bindPopup(popup_text);
+    
+    if(changed_state && has_marker) {
+        vehicle_marker.setIcon(vehicle_icon)
     }
-    vehicle_marker.setLatLng(new_lat_lon);
-    let bearing = new_vehicle.geo.speed>MIN_ACTIVE_SPEED?(new_vehicle.geo.bearing?new_vehicle.geo.bearing-180:0):0;
-    vehicle_marker.setRotationAngle(bearing);
-    vehicle_marker.getElement().querySelector('text').setAttribute('transform', `rotate(${-bearing})`);
-
+    if(changed_bearing) {
+        let marker_bearing = new_vehicle.geo.bearing; // -180 because the icon is pointing down
+        let text_bearing = -new_vehicle.geo.bearing;
+        // if(new_vehicle.geo.speed>MIN_ACTIVE_SPEED) {
+        //     bearing = new_vehicle.geo.bearing-180;
+        // }
+        vehicle_marker.setRotationAngle(marker_bearing);
+        vehicle_marker.getElement().querySelector('text').setAttribute('transform', `rotate(${text_bearing})`);
+    }
+    if((changed_route || changed_speed) && has_marker) {
+        let popup_el = vehicle_marker.getPopup();
+        if(changed_route || changed_speed) {
+            let popup_text = generate_popup_text(new_vehicle);
+            popup_el.setContent(popup_text);
+        }
+    }
+    if(has_marker) {
+        vehicle_marker.setLatLng(new_lat_lon);
+    }
     //vehicle_marker.setRotationOrigin('bottom center')
 }
 
