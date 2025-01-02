@@ -4,7 +4,7 @@ const MIN_ACTIVE_SPEED = 10;
 var websocket_connection = null;
 cache = [];
 
-function get_marker({type, route_ref, geo: { speed }}) {
+function get_icon({type, route_ref, geo: { speed }}) {
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
 
     const width = 35; // initial 25px
@@ -69,8 +69,8 @@ function get_marker({type, route_ref, geo: { speed }}) {
     if(state == 'active') {
         options.rotationOrigin = icon_data[state].rotationOrigin;
     }
-    const marker = L.divIcon(options);
-    return marker;
+    let icon = L.divIcon(options);
+    return icon;
 }
 
 function init_map() {
