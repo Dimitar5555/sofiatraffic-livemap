@@ -296,6 +296,9 @@ function zoom_to_vehicle(type, inv_number) {
 }
 
 function update_route_table(type, route_ref) {
+    if(!route_ref) {
+        return;
+    }
     let old_tbody = document.querySelector(`#${type}_${route_ref}`);
     try {
         let new_tbody = old_tbody.cloneNode();
