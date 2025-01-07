@@ -1,6 +1,6 @@
 const WEBSOCKET_URL = 'wss://damp-unit-e9e4.bulgariadb.workers.dev/';
 const DEBUG_MODE = false;
-const MIN_ACTIVE_SPEED = 10;
+const MIN_ACTIVE_SPEED = 5;
 var websocket_connection = null;
 cache = [];
 
