@@ -208,7 +208,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
         new_vehicle.marker = vehicle_marker;
     }
     
-    if(changed_state && has_marker) {
+    if((changed_state || changed_route) && has_marker) {
         vehicle_marker.setIcon(vehicle_icon)
     }
     if(changed_bearing) {
