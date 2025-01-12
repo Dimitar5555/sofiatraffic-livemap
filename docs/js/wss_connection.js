@@ -96,6 +96,7 @@ function add_to_cache(vehicle, timestamp) {
             inv_number,
             type,
             route_ref,
+            cgm_route_id: cgm_id,
             geo: {
                 bearing: null,
                 speed: null,
@@ -153,6 +154,7 @@ function add_to_cache(vehicle, timestamp) {
         if(route_ref != cache_entry.route_ref) {
             to_return = `${type}/${cache_entry.route_ref};`;
             cache_entry.route_ref = route_ref;
+            cache_entry.cgm_route_id = cgm_id;
             to_return += `${type}/${route_ref}`;
             changed_route = true;
         }

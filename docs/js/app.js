@@ -301,8 +301,9 @@ function update_route_table(type, route_ref) {
     }
     let old_tbody = document.querySelector(`#${type}_${route_ref}`);
     try {
+        const cgm_route_id = routes.find(route => route.type == type && route.route_ref == route_ref).cgm_id;
         let new_tbody = old_tbody.cloneNode();
-        let relevant_vehicles = cache.filter(vehicle => vehicle.type == type && vehicle.route_ref == route_ref);
+        let relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id);
         new_tbody.appendChild(old_tbody.children[0]);
         populate_route_table(relevant_vehicles, new_tbody, type)
         old_tbody.replaceWith(new_tbody);
