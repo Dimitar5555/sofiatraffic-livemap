@@ -133,7 +133,7 @@ const depots_data = [
         id: 5,
         type: ['trolley', 'bus'],
         name: 'Искър',
-        is_depot_vehicle: (n, type) => type == 'trolley' && 1000 <= n && n <= 1999 || type == 'bus' && 5000 <= n && n <= 5038,
+        is_depot_vehicle: (n, type) => type == 'trolley' && 1000 <= n && n <= 1999 || type == 'bus' && (1703 == n || 5000 <= n && n <= 5038),
         geometry: [
             [
                 [42.6546189, 23.4109105],
