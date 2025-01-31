@@ -46,7 +46,7 @@ function add_to_cache(vehicle, timestamp) {
         return '';
     }
     function is_fake_trolley(type, inv_number) {
-        const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505]];
+        const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505], [1703, 1703]];
         let is_inv_in_range = inv_ranges.some(([lower_bound, upper_bound]) => lower_bound <= inv_number && inv_number <= upper_bound);
         return type == 'trolley' && is_inv_in_range;
     }
