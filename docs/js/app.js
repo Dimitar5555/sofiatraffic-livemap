@@ -175,8 +175,17 @@ window.onload = async () => {
 
 function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route, changed_speed) {
     function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
+        const correct_inv_number = proper_inv_number(inv_number);
+        const classes = get_route_classes(type).join(' ');
+        let text;
+        if(!route_ref) {
+            text = 'Няма маршрут';
+        }
+        else {
+            text = `${bg_types[type]} ${route_ref}`;
+        }
         const to_return = '<div class="text-center">'
-        + `${proper_inv_number(inv_number)} на <span class="${get_route_classes(type).join(' ')}">${bg_types[type]} ${route_ref}</span><br>`
+        + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`
         + `<i class="bi bi-speedometer"></i>: ${speed} km/h`
         + '</div>';
 
