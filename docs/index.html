@@ -35,7 +35,7 @@
 <body class="py-1">
     <div class="container mb-3">
         <div class="row">
-            <div id="left_col" class="col-12 col-md-3 d-flex flex-column order-last order-md-0">
+            <div id="left_col" class="col-12  col-md-3 col-lg-2 d-flex flex-column order-last order-md-0">
                 <div class="pb-2">
                     <select id="vehicle_type" onchange="apply_filters()" class="form-control form-control-sm"></select>
                     <select id="vehicle_depot" onchange="apply_filters()" class="form-control form-control-sm"></select>
@@ -45,7 +45,7 @@
                     <table id="vehicles_table" class="table table-sm table-bordered overflow-auto"></table>
                 </div>
             </div>
-            <div id="right_col" class="col-12 col-md-9">
+            <div id="right_col" class="col-12 col-md-9 col-lg-10">
                 <div class="alert alert-warning mt-2" id="remove_after_20s">Данните се зареждат в рамките на първите 20 секунди от отварянето на страницата.</div>
                 <div id="map"></div>
             </div>
