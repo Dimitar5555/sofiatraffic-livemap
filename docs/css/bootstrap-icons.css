@@ -27,3 +27,4 @@
   }
 
 .bi-speedometer::before { content: "\f57f"; }
+.bi-crosshair::before { content: "\f769"; }

@@ -280,7 +280,8 @@ function populate_route_table(relevant_vehicles, tbody, type) {
         }
         {
             let td = document.createElement('td');
-            td.innerHTML = `<button class="btn btn-outline-success" onclick="zoom_to_vehicle('${vehicle.type}', '${vehicle.inv_number}')">Покажи на картата</button>`;
+            td.classList.add('text-center', 'align-middle')
+            td.innerHTML = `<button class="btn btn-outline-success" onclick="zoom_to_vehicle('${vehicle.type}', '${vehicle.inv_number}')" title="Покажи на картата"><i class="bi bi-crosshair"></i></button>`;
             tr.appendChild(td);
         }
         tbody.appendChild(tr);
