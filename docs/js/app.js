@@ -335,7 +335,3 @@ function proper_inv_number_for_sorting(inv_number) {
     }
     return proper_inv_number(inv_number);
 }
-
-function determine_vehicle_depot(type, inv_number) {
-    return depots_data.find(depot => depot.type == type && depot.is_in_depot(inv_number));
-}
