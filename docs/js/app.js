@@ -184,8 +184,11 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
         else {
             text = `${bg_types[type]} ${route_ref}`;
         }
+        const model = get_vehicle_model(inv_number, type);
+        const model_text = `${model?.name} ${model?.fuel?model.fuel:''} ${model?.length?'('+model.length+' m)':''}`;
         const to_return = '<div class="text-center">'
         + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`
+        + `${model_text}<br>`
         + `<i class="bi bi-speedometer"></i> ${speed?speed+' km/h':'Изчислява се...'}`
         + '</div>';
 
@@ -203,7 +206,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
     }
     else {
         const popup_options = {
-            className : 'fs-5',
+            className : 'fs-6',
             closeButton: false,
             maxWidth: 350
         }
