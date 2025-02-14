@@ -31,15 +31,6 @@ function is_vehicle_in_depot(type, coords) {
     )
 }
 
-function is_second_wagon(inv_number) {
-    return tram_compositions.some(tc => tc[1] == inv_number);
-}
-
-function get_second_wagon_of(inv_number) {
-    const result = tram_compositions.find(tc => tc[0] == inv_number);
-    return result?result[1]:false;
-}
-
 function add_to_cache(vehicle, timestamp) {
     if(vehicle.latitude == 0 && vehicle.longitude == 0) {
         // Ignore vehicles with invalid coordinates

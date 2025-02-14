@@ -268,8 +268,7 @@ function populate_route_table(relevant_vehicles, tbody, type) {
     for(const vehicle of relevant_vehicles) {
         let tr = document.createElement('tr');
         let vehicle_inv_number = typeof vehicle.inv_number == 'string' ? vehicle.inv_number.split('+')[0] : vehicle.inv_number;
-        let elligible_depots = depots_data.filter(depot => depot.type == type || depot.type.includes(type));
-        let depot = elligible_depots.find(d => d.is_depot_vehicle(vehicle_inv_number, vehicle.type))    
+        const depot = get_vehicle_depot(vehicle_inv_number, vehicle.type);
         tr.setAttribute('data-depot-id', depot.id);
         tr.setAttribute('data-inv-number', vehicle.inv_number);
         // tr.setAttribute('data-type', type);

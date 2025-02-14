@@ -3,7 +3,10 @@ const depots_data = [
         id: 1,
         type: 'tram',
         name: 'Банишора',
-        is_depot_vehicle: (n) => 0 < n && n < 999 || 3000 <= n && n < 3999,
+        inv_number_ranges: [
+            [0, 999],
+            [3000, 3999]
+        ],
         geometry: [
             [
                 [42.7168019, 23.3064182],
@@ -52,7 +55,9 @@ const depots_data = [
         id: 2,
         type: 'tram',
         name: 'Красна поляна',
-        is_depot_vehicle: (n) => 2000 < n && n < 2999,
+        inv_number_ranges: [
+            [2000, 2999]
+        ],
         geometry: [
             [
                 [42.6886212, 23.2810677],
@@ -79,7 +84,9 @@ const depots_data = [
         id: 3,
         type: ['tram', 'bus'],
         name: 'Красно село',
-        is_depot_vehicle: (inv_number) => 25010 <= inv_number && inv_number <= 25050,
+        inv_number_ranges: [
+            [25010, 25050],
+        ],
         geometry: [
             [
                 [42.6761833, 23.2797674],
@@ -111,7 +118,9 @@ const depots_data = [
         id: 4,
         type: 'tram',
         name: 'Искър',
-        is_depot_vehicle: (n) => 4000 <= n && n <= 4999,
+        inv_number_ranges: [
+            [4000, 4999]
+        ],
         geometry: [
             [
                 [42.6549445, 23.4129628],
@@ -133,7 +142,11 @@ const depots_data = [
         id: 5,
         type: ['trolley', 'bus'],
         name: 'Искър',
-        is_depot_vehicle: (n, type) => type == 'trolley' && 1000 <= n && n <= 1999 || type == 'bus' && (1703 == n || 5000 <= n && n <= 5038),
+        inv_number_ranges: [
+            ['trolley', [1000, 1999]],
+            ['bus', 1703],
+            ['bus', [5000, 5038]]
+        ],
         geometry: [
             [
                 [42.6546189, 23.4109105],
@@ -158,7 +171,10 @@ const depots_data = [
         id: 6,
         type: ['trolley', 'bus'],
         name: 'Надежда',
-        is_depot_vehicle: (n, type) => type == 'trolley' && 2000 <= n && n <= 2999 || type == 'bus' && 5039 <= n && n <= 5064,
+        inv_number_ranges: [
+            ['trolley', [2000, 2999]],
+            ['bus', [5039, 5064]]
+        ],
         geometry: [
             [
                 [42.7137647, 23.3076727],
@@ -182,7 +198,7 @@ const depots_data = [
         type: 'trolley',
         name: 'Левски',
         hide: true,
-        is_depot_vehicle: (n) => false,
+        inv_number_ranges: [],
         geometry: [
             [
                 [42.7123083, 23.3684752],
@@ -200,7 +216,9 @@ const depots_data = [
         id: 8,
         type: 'bus',
         name: 'Земляне',
-        is_depot_vehicle: (n) => 1000 <= n && n <= 1999,
+        inv_number_ranges: [
+            [1000, 1999]
+        ],
         geometry: [
             [
                 [42.6832973, 23.2775602],
@@ -262,7 +280,9 @@ const depots_data = [
         id: 9,
         type: 'bus',
         name: 'Малашевци',
-        is_depot_vehicle: (n) => 2000 <= n && n <= 2999,
+        inv_number_ranges: [
+            [2000, 2999]
+        ],
         geometry: [
             [
                 [42.7144709, 23.3583078],
@@ -297,7 +317,9 @@ const depots_data = [
         id: 10,
         type: 'bus',
         name: 'Дружба',
-        is_depot_vehicle: (n) => 3000 <= n && n <= 3999,
+        inv_number_ranges: [
+            [3000, 3999]
+        ],
         geometry: [
             [
                 [42.6451460, 23.4153496],
@@ -321,6 +343,40 @@ const depots_data = [
         id: 11,
         type: 'bus',
         name: 'МТК',
-        is_depot_vehicle: (n) => 7000 <= n && n <= 7999
+        inv_number_ranges: [
+            [7000, 7999]
+        ]
     }
 ];
+
+function is_inv_number_in_range(inv_number, range) {
+    if(typeof range === 'object') {
+        const [lb, rb] = range;
+        return lb <= inv_number && inv_number <= rb;
+    }
+    else {
+        return range === inv_number;
+    }
+}
+
+function get_vehicle_depot(inv_number, type) {
+    const elligible_depots = depots_data.filter(depot => 
+        typeof depot.type === 'string' && depot.type === type || 
+        typeof depot.type === 'object' && depot.type.includes(type));
+
+    for(const depot of elligible_depots) {
+        for(const range of depot.inv_number_ranges) {
+            if(typeof range[0] === 'string' && range[0] === type) {
+                if (is_inv_number_in_range(inv_number, range[1])) {
+                    return depot;
+                }
+            }
+            else {
+                if(is_inv_number_in_range(inv_number, range)) {
+                    return depot;
+                }
+            }
+        }
+    }
+    return null;
+}
