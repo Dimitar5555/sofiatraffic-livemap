@@ -173,7 +173,7 @@ window.onload = async () => {
     }, 20 * 1000);
 };
 
-function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route, changed_speed) {
+function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route) {
     function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
         const correct_inv_number = proper_inv_number(inv_number);
         const classes = get_route_classes(type).join(' ');
@@ -186,10 +186,13 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
         }
         const to_return = '<div class="text-center">'
         + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`
-        + `<i class="bi bi-speedometer"></i>: ${speed} km/h`
+        + `<i class="bi bi-speedometer"></i> ${speed?speed+' km/h':'Изчислява се...'}`
         + '</div>';
 
         return to_return;
+    }
+    function generate_tooltip_text({ inv_number, type, route_ref }) {
+        return `${bg_types[type]} ${proper_inv_number(inv_number)}`;
     }
     let has_marker = new_vehicle.marker != null;
     let vehicle_marker = false;
@@ -199,20 +202,63 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
         vehicle_marker = new_vehicle.marker;
     }
     else {
-        let popup_text = generate_popup_text(new_vehicle);
-        const marker_options = {
-            icon: vehicle_icon,
-        }
         const popup_options = {
             className : 'fs-5',
             closeButton: false,
             maxWidth: 350
         }
+
+        const tooltip_options = {
+            direction: 'top',
+            permanent: false,
+            className: 'fs-6',
+            offset: [0, -12]
+        }
+
+        const marker_options = {
+            icon: vehicle_icon,
+        }
         vehicle_marker = L.marker(new_lat_lon, marker_options)
-        .bindPopup(popup_text, popup_options)
         .addTo(map)
-        .on('click', () => {
+        .on('click', (e) => {
+            if(e.target.getPopup()) {
+                e.target.unbindPopup();
+                return;
+            }
+            const vehicle = cache.find(v => v.marker == e.target);
+            const popup_text = generate_popup_text(vehicle);
+            e.target.bindPopup(popup_text, popup_options).openPopup();
             register_vehicle_view(new_vehicle.type, new_vehicle.inv_number, true);
+        })
+        .on('popupopen', (e) => {
+            if(e.target.getTooltip()) {
+                e.target.unbindTooltip();
+            }
+        })
+        .on('popupclose', (e) => {
+            e.target.unbindPopup();
+        })
+        .on('mouseover', (e) => {
+            if(e.target.getPopup()) {
+                return;
+            }
+            const vehicle = cache.find(v => v.marker == e.target);
+            const tooltip_text = generate_tooltip_text(vehicle);
+            e.target.bindTooltip(tooltip_text, tooltip_options).openTooltip();
+        })
+        .on('mouseout', (e) => {
+            if(!e.target.getPopup()) {
+                return;
+            }
+            e.target.unbindTooltip();
+        })
+        .on('move', (e) => {
+            const popup = e.target.getPopup();
+            if(popup) {
+                const vehicle = cache.find(v => v.marker == e.target);
+                const popup_text = generate_popup_text(vehicle);
+                popup.setContent(popup_text);
+            }
         });
         new_vehicle.marker = vehicle_marker;
     }
@@ -220,7 +266,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
     if((changed_state || changed_route) && has_marker) {
         vehicle_marker.setIcon(vehicle_icon)
     }
-    if(changed_bearing) {
+    if(changed_bearing && has_marker) {
         let marker_bearing = new_vehicle.geo.bearing; // -180 because the icon is pointing down
         let text_bearing = -new_vehicle.geo.bearing;
         // if(new_vehicle.geo.speed>MIN_ACTIVE_SPEED) {
@@ -228,13 +274,6 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
         // }
         vehicle_marker.setRotationAngle(marker_bearing);
         vehicle_marker.getElement().querySelector('text').setAttribute('transform', `rotate(${text_bearing})`);
-    }
-    if((changed_route || changed_speed) && has_marker) {
-        let popup_el = vehicle_marker.getPopup();
-        if(changed_route || changed_speed) {
-            let popup_text = generate_popup_text(new_vehicle);
-            popup_el.setContent(popup_text);
-        }
     }
     if(has_marker) {
         vehicle_marker.setLatLng(new_lat_lon);
