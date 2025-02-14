@@ -15,7 +15,7 @@ function get_icon({type, route_ref, geo: { speed }}) {
     const icon_anchor = [width/2, width/2];
 
     const passive_popup_anchor = [0, -width/2];
-    const active_popup_anchor = [width/2, -2];
+    const active_popup_anchor = [0, -width/2];
 
     const triangle_acute_point = `${half_width},${height}`;
     const triangle_side_margin = 1.75;
