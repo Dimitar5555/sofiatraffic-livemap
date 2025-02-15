@@ -189,8 +189,14 @@ const models = {
             name: 'Higer KLQ6832GEV',
             inv_number_ranges: [
                 [1701, 1703],
-                [2811, 2899],
                 [5001, 5099]
+            ]
+        },
+        {
+            name: 'Higer KLQ6832GEV3',
+            length: 9,
+            inv_number_ranges: [
+                [2811, 2899]
             ]
         },
         {
