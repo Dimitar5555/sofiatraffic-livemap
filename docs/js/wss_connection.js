@@ -1,4 +1,14 @@
 function init_websocket() {
+function init_websocket(attempts=1) {
+    if(attempts >= 2) {
+        const el = document.querySelector('.container.mb-3');
+        const alert = document.createElement('div');
+        alert.classList.add('alert', 'alert-danger', 'text-center');
+        alert.textContent = 'Услугата е временно недостъпна. Моля опитайте по-късно.';
+        el.innerHTML = '';
+        el.appendChild(alert);
+        return;
+    }
     websocket_connection = new WebSocket(WEBSOCKET_URL);
     websocket_connection.onmessage = ev => {
         let data = JSON.parse(ev.data);
@@ -21,6 +31,9 @@ function init_websocket() {
         }
         // update_cache(processed_vehicles);
     };
+    websocket_connection.onerror = () => {
+        setTimeout(() => init_websocket(attempts + 1), 1000);
+    }
 }
 
 function is_vehicle_in_depot(type, coords) {
