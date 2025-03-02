@@ -1,4 +1,3 @@
-function init_websocket() {
 function init_websocket(attempts=1) {
     if(attempts >= 2) {
         const el = document.querySelector('.container.mb-3');
