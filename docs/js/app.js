@@ -341,8 +341,8 @@ function populate_route_table(relevant_vehicles, tbody, type) {
 
 function zoom_to_vehicle(type, inv_number) {
     let marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
-    marker.openPopup();
-    map.flyTo(marker._latlng, 17);
+    map.flyTo(marker._latlng, 17, { animate: false });
+    marker.fireEvent('click');
     register_vehicle_view(type, inv_number);
 }
 
