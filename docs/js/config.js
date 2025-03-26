@@ -1,0 +1,1 @@
+const MERGE_TRAM_COMPONENTS = true;
