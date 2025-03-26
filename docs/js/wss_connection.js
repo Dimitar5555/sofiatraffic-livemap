@@ -117,6 +117,9 @@ function add_to_cache(vehicle, timestamp) {
         if(route_ref) {
             to_return = `${type}/${route_ref}`;
         }
+        else {
+            to_return = `${type}/outOfService`;
+        }
         changed_route = true;
     }
     else {
