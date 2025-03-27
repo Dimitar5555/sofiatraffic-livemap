@@ -352,12 +352,15 @@ function zoom_to_vehicle(type, inv_number) {
 }
 
 function update_route_table(type, route_ref) {
+    if(route_ref === 'null' || route_ref === 'undefined') {
+        route_ref = 'outOfService';
+    }
     let old_tbody = document.querySelector(`#${type}_${route_ref}`);
     try {
         let relevant_vehicles;
         if(route_ref != 'outOfService') {
             const cgm_route_id = routes.find(route => route.type == type && route.route_ref == route_ref).cgm_id;
-            relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id);
+            relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id && vehicle.route_ref);
         }
         else {
             relevant_vehicles = cache.filter(vehicle => vehicle.type == type && !vehicle.route_ref);
