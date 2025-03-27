@@ -36,11 +36,11 @@ function init_websocket(attempts=1) {
             // update_cache(processed);
         }
         console.timeEnd('update cache');
-        for(let table of tables_to_update) {
+        for(const table of tables_to_update) {
             if(table == '') {
                 continue;
             }
-            let [type, line] = table.split('/');
+            const [type, line] = table.split('/');
             update_route_table(type, line);
         }
         // update_cache(processed_vehicles);
@@ -98,7 +98,7 @@ function add_to_cache(vehicle, timestamp) {
     }
 
     const inv_number = determine_inv_number(vehicle);
-    if(inv_number == '') {
+    if(inv_number == '' || inv_number == 8888) {
         return '';
     }
 
@@ -106,7 +106,7 @@ function add_to_cache(vehicle, timestamp) {
 
     let route_ref = null;
     if(!is_vehicle_in_depot(type, coords)) {
-        route_ref = routes.find(route => route.cgm_id === vehicle.cgm_route_id)?.route_ref
+        route_ref = routes.find(route => route.cgm_id === vehicle.cgm_route_id)?.route_ref;
     }
 
     let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
