@@ -44,6 +44,7 @@ function init_websocket(attempts=1) {
             update_route_table(type, line);
         }
         // update_cache(processed_vehicles);
+        apply_filters();
     };
     websocket_connection.onerror = () => {
         setTimeout(() => init_websocket(attempts + 1), 1000);
