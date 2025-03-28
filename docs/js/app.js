@@ -4,12 +4,14 @@ const MIN_ACTIVE_SPEED = 5;
 var websocket_connection = null;
 cache = [];
 
-function get_icon({type, route_ref, geo: { speed }}) {
+
+function get_icon({type, route_ref, geo: { speed }}, reduce_marker) {
+    console.log(reduce_marker)
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
 
-    const width = 40; // initial 25px
+    const width = !reduce_marker?40:40/3; // initial 25px
     const half_width = width/2;
-    const height = 60; // initial 41px
+    const height = !reduce_marker?60:20; // initial 41px
 
     const triangle_acute_point = `${half_width},${height}`;
     const triangle_side_margin = 1.75;
@@ -143,7 +145,7 @@ window.onload = async () => {
     }, 20 * 1000);
 };
 
-function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route) {
+function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route, reduce_marker) {
     function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
         const correct_inv_number = proper_inv_number(inv_number);
         const classes = get_route_classes(type).join(' ');
@@ -169,7 +171,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
     }
     let has_marker = new_vehicle.marker != null;
     let vehicle_marker = false;
-    let vehicle_icon = get_icon(new_vehicle);
+    let vehicle_icon = get_icon(new_vehicle, reduce_marker);
     let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
     if(has_marker) {
         vehicle_marker = new_vehicle.marker;
@@ -185,7 +187,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
             direction: 'top',
             permanent: false,
             className: 'fs-6',
-            offset: [0, -12]
+            offset: reduce_marker?[0, 0]:[0, -12]
         }
 
         const marker_options = {

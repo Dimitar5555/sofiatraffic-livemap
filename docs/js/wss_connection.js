@@ -106,8 +106,10 @@ function add_to_cache(vehicle, timestamp) {
     const type = vehicle.type;
 
     let route_ref = null;
+    let reduce_marker = true;
     if(!is_vehicle_in_depot(type, coords)) {
         route_ref = routes.find(route => route.cgm_id === vehicle.cgm_route_id)?.route_ref;
+        reduce_marker = false;
     }
 
     let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
@@ -189,6 +191,6 @@ function add_to_cache(vehicle, timestamp) {
     if(changed_state) {
         changed_bearing = true;
     }
-    update_map_vehicle(cache_entry, changed_state, changed_bearing, changed_route);
     return to_return;
+    update_map_vehicle(cache_entry, changed_state, changed_bearing, changed_route, reduce_marker);
 }
