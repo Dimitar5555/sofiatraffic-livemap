@@ -7,63 +7,36 @@ cache = [];
 function get_icon({type, route_ref, geo: { speed }}) {
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
 
-    const width = 35; // initial 25px
+    const width = 40; // initial 25px
     const half_width = width/2;
-    const height = 57.4; // initial 41px
-    const inner_circle_radius = 13; // initial 4.75px
-
-    const icon_anchor = [width/2, width/2];
-
-    const passive_popup_anchor = [0, -width/2];
-    const active_popup_anchor = [0, -width/2];
+    const height = 60; // initial 41px
 
     const triangle_acute_point = `${half_width},${height}`;
     const triangle_side_margin = 1.75;
-    const triangle_left_point = `${triangle_side_margin},18.75`;
-    const triangle_right_point = `${width-triangle_side_margin},18.75`;
+    const triangle_left_point = `${triangle_side_margin},15`;
+    const triangle_right_point = `${width-triangle_side_margin},15`;
 
-    let class_name = 'small';
-    if(route_ref != null) {
-        const route_ref_length = route_ref.toString().length;
-        if(route_ref_length <= 2) {
-            class_name = 'large';
-        }
-    }
-
+    const class_name = route_ref != null && route_ref.toString().length <= 2 ? 'large' : 'small';
 
     const open_svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
     const outer_circle = `<circle cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
-    const inner_circle = `<circle cx="${half_width}" cy="${half_width}" r="${inner_circle_radius}" fill="#fff"/>`;
     const triangle = `<polygon points="${triangle_left_point} ${triangle_right_point} ${triangle_acute_point}"/>`;
   
     const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform="rotate(0)" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
     const close_svg = '</svg>';
 
-    let icon_data = {
-        passive: {
-            iconSize: [width, width],
-            iconAnchor: icon_anchor,
-            popupAnchor: passive_popup_anchor,
-            html: `${open_svg}${outer_circle}${inner_circle}${text}${close_svg}`
-        },
-        active: {
-            iconSize: [width, height],
-            //iconAnchor: [12.5, 41],
-            iconAnchor: icon_anchor,
-            popupAnchor: active_popup_anchor,
-            rotationOrigin: icon_anchor.map(a => a+' px').join(' '),
-            html: `${open_svg}${outer_circle}${triangle}${inner_circle}${text}${close_svg}`,
-        }
-    }
     let options = {
-        iconSize: icon_data[state].iconSize,
-        iconAnchor: icon_data[state].iconAnchor,
-        popupAnchor: icon_data[state].popupAnchor,
-        html: icon_data[state].html,
+        iconSize: [width, height],
+        iconAnchor: [width/2, width/2],
+        popupAnchor: [0, -width/2],
         className: `vehicle-${type}`
     }
     if(state == 'active') {
-        options.rotationOrigin = icon_data[state].rotationOrigin;
+        options.html = `${open_svg}${outer_circle}${triangle}${text}${close_svg}`;
+        options.rotationOrigin = options.iconAnchor.map(a => a+' px').join(' ');
+    }
+    else {
+        options.html = `${open_svg}${outer_circle}${text}${close_svg}`;
     }
     let icon = L.divIcon(options);
     return icon;
