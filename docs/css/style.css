@@ -18,11 +18,11 @@
 }
 
 .vehicle-trolley > svg {
-    fill: var(--trolley-colour);;
+    fill: var(--trolley-colour);
 }
 
 .vehicle-bus > svg {
-    fill: var(--bus-colour);;
+    fill: var(--bus-colour);
 }
 
 .tram-bg-color {
