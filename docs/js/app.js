@@ -221,6 +221,7 @@ function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed
 
         const marker_options = {
             icon: vehicle_icon,
+            riseOnHover: true
         }
         vehicle_marker = L.marker(new_lat_lon, marker_options)
         .addTo(map)
