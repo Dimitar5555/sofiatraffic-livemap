@@ -29,10 +29,7 @@ function init_websocket(attempts=1) {
         let tables_to_update = new Set();
         for(const vehicle of data.avl) {
             preprocess_vehicle(vehicle);
-            const response = add_to_cache(vehicle, now).split(';');
-            for(const table of response) {
-                tables_to_update.add(table);
-            }
+            add_to_cache(vehicle, now, tables_to_update);
             // update_cache(processed);
         }
         console.timeEnd('update cache');
@@ -92,15 +89,15 @@ function determine_inv_number(vehicle) {
     return inv_number;
 }
 
-function add_to_cache(vehicle, timestamp) {
+function add_to_cache(vehicle, timestamp, tables_to_update) {
     const coords = [vehicle.latitude, vehicle.longitude];
     if(are_coords_invalid(coords)) {
-        return '';
+        return;
     }
 
     const inv_number = determine_inv_number(vehicle);
     if(inv_number == '' || inv_number == 8888) {
-        return '';
+        return;
     }
 
     const type = vehicle.type;
@@ -114,7 +111,6 @@ function add_to_cache(vehicle, timestamp) {
 
     let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
     
-    let to_return = '';
     let changed_state = false;
     let changed_bearing = false;
     let changed_route = false;
@@ -139,10 +135,10 @@ function add_to_cache(vehicle, timestamp) {
         };
         cache.push(cache_entry);
         if(route_ref) {
-            to_return = `${type}/${route_ref}`;
+            tables_to_update.add(`${type}/${route_ref}`);
         }
         else {
-            to_return = `${type}/outOfService`;
+            tables_to_update.add(`${type}/outOfService`);
         }
         changed_route = true;
     }
@@ -181,16 +177,15 @@ function add_to_cache(vehicle, timestamp) {
         }
 
         if(route_ref != cache_entry.route_ref) {
-            to_return = `${type}/${cache_entry.route_ref};`;
+            tables_to_update.add(`${type}/${cache_entry.route_ref}`);
+            tables_to_update.add(`${type}/${route_ref}`);
             cache_entry.route_ref = route_ref;
             cache_entry.cgm_route_id = vehicle.cgm_route_id;
-            to_return += `${type}/${route_ref}`;
             changed_route = true;
         }
     }
     if(changed_state) {
         changed_bearing = true;
     }
-    return to_return;
     update_map_vehicle(cache_entry, changed_state, changed_bearing, changed_route, reduce_marker);
 }
