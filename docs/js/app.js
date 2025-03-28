@@ -35,11 +35,7 @@ function get_icon({type, route_ref, geo: { speed }}) {
     const outer_circle = `<circle cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
     const inner_circle = `<circle cx="${half_width}" cy="${half_width}" r="${inner_circle_radius}" fill="#fff"/>`;
     const triangle = `<polygon points="${triangle_left_point} ${triangle_right_point} ${triangle_acute_point}"/>`;
-
-    const small_font_size = 11.5;
-    const large_font_size = 16;
-    const style = `<style>.svg_text { font-weight: bold; font-family: sans-serif; fill: #000; text-align: center } .svg_small { font-size: ${small_font_size}px; } .svg_large { font-size: ${large_font_size}px; }</style>`;
-    
+  
     const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform="rotate(0)" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
     const close_svg = '</svg>';
 
@@ -48,7 +44,7 @@ function get_icon({type, route_ref, geo: { speed }}) {
             iconSize: [width, width],
             iconAnchor: icon_anchor,
             popupAnchor: passive_popup_anchor,
-            html: `${open_svg}${style}${outer_circle}${inner_circle}${text}${close_svg}`
+            html: `${open_svg}${outer_circle}${inner_circle}${text}${close_svg}`
         },
         active: {
             iconSize: [width, height],
@@ -56,7 +52,7 @@ function get_icon({type, route_ref, geo: { speed }}) {
             iconAnchor: icon_anchor,
             popupAnchor: active_popup_anchor,
             rotationOrigin: icon_anchor.map(a => a+' px').join(' '),
-            html: `${open_svg}${style}${outer_circle}${triangle}${inner_circle}${text}${close_svg}`,
+            html: `${open_svg}${outer_circle}${triangle}${inner_circle}${text}${close_svg}`,
         }
     }
     let options = {
