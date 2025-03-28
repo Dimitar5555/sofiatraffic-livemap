@@ -67,18 +67,14 @@ function init_routes_tables() {
     .then(data => data.json())
     .then(r => {
         routes = r.filter(route => route.type != 'metro');
-        let table = document.querySelector('table#vehicles_table');
-        for(const route of routes) {
-            if(route.type == 'metro') {
-                continue;
-            }
-            let tbody = generate_route_table(route.type, route.route_ref);
-            table.appendChild(tbody);
-        }
         for(const type of ['bus', 'trolley', 'tram']) {
-            const vehicle_tbodies = Array.from(table.querySelectorAll(`tbody[data-type="${type}"]`));
-            let tbody = generate_route_table(type, 'outOfService');
-            table.insertBefore(tbody, vehicle_tbodies[vehicle_tbodies.length-1].nextSibling);
+            const last_index = routes.findLastIndex(route => route.type == type);
+            routes.splice(last_index+1, 0, {type: type, route_ref: 'outOfService'});
+        }
+        const table = document.querySelector('table#vehicles_table');
+        for(const route of routes) {
+            const tbody = generate_route_table(route.type, route.route_ref);
+            table.appendChild(tbody);
         }
         //skip metro
         //fill table
