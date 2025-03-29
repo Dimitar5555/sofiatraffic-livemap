@@ -1,13 +1,49 @@
-function preprocess_vehicle(vehicle) {
-    vehicle.type = vehicle.vehicleType
-    delete vehicle.vehicleType;
-
+function preprocess_vehicle(vehicle, timestamp) {
+    if(are_coords_invalid([vehicle.latitude, vehicle.longitude])) {
+        return false;
+    }
+    vehicle.type = vehicle.vehicleType;
     const cgm_types = {
         'bus': 'A',
         'trolley': 'TB',
         'tram': 'TM'
     };
-    vehicle.cgm_route_id = `${cgm_types[vehicle.type]}${vehicle.line}`;
+    const cgm_route_id = `${cgm_types[vehicle.type]}${vehicle.line}`;
+    determine_inv_number(vehicle);
+    const type = vehicle.type;
+
+    const inv_number = determine_inv_number(vehicle);
+    if(inv_number == '' || inv_number == 8888) {
+        return false;
+    }
+
+    let route_ref = null;
+    let reduce_marker = true;
+    if(!is_vehicle_in_depot(type, [vehicle.latitude, vehicle.longitude])) {
+        route_ref = routes.find(route => route.cgm_id === cgm_route_id)?.route_ref;
+        reduce_marker = false;
+    }
+
+    return {
+        inv_number,
+        type,
+        cgm_route_id,
+        route_ref,
+        reduce_marker,
+        hidden: false,
+        geo: {
+            bearing: 0,
+            speed: 0,
+            prev: {
+                coords: [0, 0],
+                timestamp: null
+            },
+            curr: {
+                coords: [vehicle.latitude, vehicle.longitude],
+                timestamp: timestamp
+            }
+        }
+    };
 }
 
 function init_websocket(attempts=1) {
@@ -28,10 +64,14 @@ function init_websocket(attempts=1) {
         console.time('update cache', data.avl.length);
         let tables_to_update = new Set();
         for(const vehicle of data.avl) {
-            preprocess_vehicle(vehicle);
-            add_to_cache(vehicle, now, tables_to_update);
-            // update_cache(processed);
+            const processed = preprocess_vehicle(vehicle, now);
+            if(!processed) {
+                continue;
+            }
+            add_to_cache(processed, tables_to_update);
         }
+        handle_tram_compositions();
+        update_map_markers();
         console.timeEnd('update cache');
         for(const table of tables_to_update) {
             if(table == '') {
@@ -40,7 +80,6 @@ function init_websocket(attempts=1) {
             const [type, line] = table.split('/');
             update_route_table(type, line);
         }
-        // update_cache(processed_vehicles);
         apply_filters();
     };
     websocket_connection.onerror = () => {
@@ -60,6 +99,75 @@ function are_coords_invalid([lat, lon]) {
     return lat == 0 && lon == 0;
 }
 
+function handle_tram_compositions() {
+    for(const composition of tram_compositions) {
+        const [first_wagon, second_wagon] = composition;
+        const first_wagon_entry = cache.find(entry => entry.inv_number == first_wagon);
+        const second_wagon_entry = cache.find(entry => entry.inv_number == second_wagon);
+        const composition_inv_number = `${first_wagon}+${second_wagon}`;
+        const composition_entry = cache.find(entry => entry.inv_number == composition_inv_number);
+
+        if(!first_wagon_entry || !second_wagon_entry) {
+            if(first_wagon_entry) {
+                first_wagon_entry.hidden = false;
+            }
+            if(second_wagon_entry) {
+                second_wagon_entry.hidden = false;
+            }
+            if(composition_entry) {
+                composition_entry.hidden = true;
+            }
+            continue;
+        }
+
+        const first_wagon_coords = first_wagon_entry.geo.curr.coords;
+        const second_wagon_coords = second_wagon_entry.geo.curr.coords;
+        const distance = caclulate_distance(first_wagon_coords, second_wagon_coords);
+        if(distance > 500) {
+            first_wagon_entry.hidden = false;
+            second_wagon_entry.hidden = false;
+            composition_entry.hidden = true;
+            continue;
+        }
+
+        if(!composition_entry) {
+            cache.push({
+                inv_number: composition_inv_number,
+                type: 'tram',
+                cgm_route_id: first_wagon_entry.cgm_route_id,
+                route_ref: first_wagon_entry.route_ref,
+                reduce_marker: first_wagon_entry.reduce_marker,
+                hidden: false,
+                geo: {
+                    bearing: 0,
+                    speed: 0,
+                    prev: {
+                        coords: [0, 0],
+                        timestamp: null
+                    },
+                    curr: {
+                        coords: first_wagon_coords,
+                        timestamp: first_wagon_entry.geo.curr.timestamp
+                    }
+                },
+                marker: null
+            });
+        }
+        else {
+            composition_entry.cgm_route_id = first_wagon_entry.cgm_route_id;
+            composition_entry.route_ref = first_wagon_entry.route_ref;
+            composition_entry.reduce_marker = first_wagon_entry.reduce_marker;
+            composition_entry.geo.speed = first_wagon_entry.geo.speed;
+            composition_entry.geo.bearing = first_wagon_entry.geo.bearing;
+            composition_entry.geo.prev = composition_entry.geo.curr;
+            composition_entry.geo.curr = first_wagon_entry.geo.curr;
+        }
+
+        first_wagon_entry.hidden = true;
+        second_wagon_entry.hidden = true;
+    }
+}
+
 function determine_inv_number(vehicle) {
     function is_fake_trolley(type, inv_number) {
         const inv_ranges = [[5001, 5015], [5031, 5064], [2501, 2505], [1703, 1703]];
@@ -68,9 +176,6 @@ function determine_inv_number(vehicle) {
     }
 
     let inv_number = Number(vehicle.vehicleId.replace(/[a-z]/gi, ''));
-    if(is_second_wagon(inv_number) && MERGE_TRAM_COMPONENTS) {
-        return '';
-    }
 
     if(is_fake_trolley(vehicle.type, inv_number)) {
         vehicle.type = 'bus';
@@ -80,81 +185,31 @@ function determine_inv_number(vehicle) {
         }
     }
     
-    if(vehicle.type == 'tram' && MERGE_TRAM_COMPONENTS) {
-        const second_wagon = get_second_wagon_of(inv_number);
-        if(second_wagon) {
-            inv_number = `${inv_number}+${second_wagon}`;
-        }
-    }
     return inv_number;
 }
 
-function add_to_cache(vehicle, timestamp, tables_to_update) {
-    const coords = [vehicle.latitude, vehicle.longitude];
-    if(are_coords_invalid(coords)) {
-        return;
-    }
-
-    const inv_number = determine_inv_number(vehicle);
-    if(inv_number == '' || inv_number == 8888) {
-        return;
-    }
-
-    const type = vehicle.type;
-
-    let route_ref = null;
-    let reduce_marker = true;
-    if(!is_vehicle_in_depot(type, coords)) {
-        route_ref = routes.find(route => route.cgm_id === vehicle.cgm_route_id)?.route_ref;
-        reduce_marker = false;
-    }
-
-    let cache_entry = cache.find(entry => entry.type === type && entry.inv_number === inv_number);
+function add_to_cache(vehicle, tables_to_update) {
+    let cache_entry = cache.find(entry => entry.type === vehicle.type && entry.inv_number === vehicle.inv_number);
     
     let changed_state = false;
-    let changed_bearing = false;
-    let changed_route = false;
     if(!cache_entry) {
-        cache_entry = {
-            inv_number,
-            type,
-            route_ref,
-            cgm_route_id: vehicle.cgm_route_id,
-            geo: {
-                bearing: null,
-                speed: null,
-                prev: {
-                    coords: [0, 0],
-                    timestamp: null
-                },
-                curr: {
-                    coords: coords,
-                    timestamp: timestamp
-                }
-            }
-        };
-        cache.push(cache_entry);
-        if(route_ref) {
-            tables_to_update.add(`${type}/${route_ref}`);
+        cache.push(vehicle);
+        if(vehicle.route_ref) {
+            tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
         }
         else {
-            tables_to_update.add(`${type}/outOfService`);
+            tables_to_update.add(`${vehicle.type}/outOfService`);
         }
         changed_route = true;
     }
     else {
-        const same_timestamp = cache_entry.geo.curr.timestamp === timestamp;
-        const same_coords = cache_entry.geo.curr.coords[0] === coords[0] && cache_entry.geo.curr.coords[1] === coords[1];
+        const same_timestamp = cache_entry.geo.curr.timestamp === vehicle.geo.curr.timestamp;
+        const same_coords = cache_entry.geo.curr.coords[0] === vehicle.geo.curr.coords[0] && cache_entry.geo.curr.coords[1] === vehicle.geo.curr.coords[1];
         if(same_timestamp || same_coords) {
             return '';
         }
-        cache_entry.geo.prev.coords[0] = cache_entry.geo.curr.coords[0];
-        cache_entry.geo.prev.coords[1] = cache_entry.geo.curr.coords[1];
-        cache_entry.geo.prev.timestamp = cache_entry.geo.curr.timestamp;
-
-        cache_entry.geo.curr.coords[0] = coords[0];
-        cache_entry.geo.curr.coords[1] = coords[1];
-        cache_entry.geo.curr.timestamp = timestamp;
+        cache_entry.geo.prev = cache_entry.geo.curr;
+        cache_entry.geo.curr = vehicle.geo.curr;
 
         const old_bearing = cache_entry.geo.bearing;
         const new_bearing = calculate_bearing(cache_entry.geo);
@@ -162,7 +217,6 @@ function add_to_cache(vehicle, timestamp, tables_to_update) {
             changed_bearing = true;
             cache_entry.geo.bearing = new_bearing;
         }
-
 
         const old_speed = cache_entry.geo.speed;
         const new_speed = calculate_speed(cache_entry.geo);
@@ -176,10 +230,10 @@ function add_to_cache(vehicle, timestamp, tables_to_update) {
             }
         }
 
-        if(route_ref != cache_entry.route_ref) {
-            tables_to_update.add(`${type}/${cache_entry.route_ref}`);
-            tables_to_update.add(`${type}/${route_ref}`);
-            cache_entry.route_ref = route_ref;
+        if(vehicle.route_ref != cache_entry.route_ref) {
+            tables_to_update.add(`${cache_entry.type}/${cache_entry.route_ref}`);
+            tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
+            cache_entry.route_ref = vehicle.route_ref;
             cache_entry.cgm_route_id = vehicle.cgm_route_id;
             changed_route = true;
         }
@@ -187,5 +241,4 @@ function add_to_cache(vehicle, timestamp, tables_to_update) {
     if(changed_state) {
         changed_bearing = true;
     }
-    update_map_vehicle(cache_entry, changed_state, changed_bearing, changed_route, reduce_marker);
 }

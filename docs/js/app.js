@@ -144,118 +144,6 @@ window.onload = async () => {
     }, 20 * 1000);
 };
 
-function update_map_vehicle(new_vehicle, changed_state, changed_bearing, changed_route, reduce_marker) {
-    function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
-        const correct_inv_number = proper_inv_number(inv_number);
-        const classes = get_route_classes(type).join(' ');
-        let text;
-        if(!route_ref) {
-            text = 'Няма маршрут';
-        }
-        else {
-            text = `${bg_types[type]} ${route_ref}`;
-        }
-        const model = get_vehicle_model(inv_number, type);
-        const model_text = `${model?.name} ${model?.fuel?model.fuel:''} ${model?.length?'('+model.length+' m)':''}`;
-        const to_return = '<div class="text-center">'
-        + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`
-        + `${model_text}<br>`
-        + `<i class="bi bi-speedometer"></i> ${speed?speed+' km/h':'Изчислява се...'}`
-        + '</div>';
-
-        return to_return;
-    }
-    function generate_tooltip_text({ inv_number, type, route_ref }) {
-        return `${bg_types[type]} ${proper_inv_number(inv_number)}`;
-    }
-    let has_marker = new_vehicle.marker != null;
-    let vehicle_marker = false;
-    let vehicle_icon = get_icon(new_vehicle, reduce_marker);
-    let new_lat_lon = new L.LatLng(...new_vehicle.geo.curr.coords);
-    if(has_marker) {
-        vehicle_marker = new_vehicle.marker;
-    }
-    else {
-        const popup_options = {
-            className : 'fs-6',
-            closeButton: false,
-            maxWidth: 350
-        }
-
-        const tooltip_options = {
-            direction: 'top',
-            permanent: false,
-            className: 'fs-6',
-            offset: reduce_marker?[0, 0]:[0, -12]
-        }
-
-        const marker_options = {
-            icon: vehicle_icon,
-            riseOnHover: true
-        }
-        vehicle_marker = L.marker(new_lat_lon, marker_options)
-        .addTo(map)
-        .on('click', (e) => {
-            if(e.target.getPopup()) {
-                e.target.unbindPopup();
-                return;
-            }
-            const vehicle = cache.find(v => v.marker == e.target);
-            const popup_text = generate_popup_text(vehicle);
-            e.target.bindPopup(popup_text, popup_options).openPopup();
-            register_vehicle_view(new_vehicle.type, new_vehicle.inv_number, true);
-        })
-        .on('popupopen', (e) => {
-            if(e.target.getTooltip()) {
-                e.target.unbindTooltip();
-            }
-        })
-        .on('popupclose', (e) => {
-            e.target.unbindPopup();
-        })
-        .on('mouseover', (e) => {
-            if(e.target.getPopup()) {
-                return;
-            }
-            const vehicle = cache.find(v => v.marker == e.target);
-            const tooltip_text = generate_tooltip_text(vehicle);
-            e.target.bindTooltip(tooltip_text, tooltip_options).openTooltip();
-        })
-        .on('mouseout', (e) => {
-            if(!e.target.getPopup()) {
-                return;
-            }
-            e.target.unbindTooltip();
-        })
-        .on('move', (e) => {
-            const popup = e.target.getPopup();
-            if(popup) {
-                const vehicle = cache.find(v => v.marker == e.target);
-                const popup_text = generate_popup_text(vehicle);
-                popup.setContent(popup_text);
-            }
-        });
-        new_vehicle.marker = vehicle_marker;
-    }
-    
-    if((changed_state || changed_route) && has_marker) {
-        vehicle_marker.setIcon(vehicle_icon)
-    }
-    if(changed_bearing && has_marker) {
-        let marker_bearing = new_vehicle.geo.bearing; // -180 because the icon is pointing down
-        let text_bearing = -new_vehicle.geo.bearing;
-        // if(new_vehicle.geo.speed>MIN_ACTIVE_SPEED) {
-        //     bearing = new_vehicle.geo.bearing-180;
-        // }
-        vehicle_marker.setRotationAngle(marker_bearing);
-        vehicle_marker.getElement().querySelector('text').setAttribute('transform', `rotate(${text_bearing})`);
-    }
-    if(has_marker) {
-        vehicle_marker.setLatLng(new_lat_lon);
-    }
-    //vehicle_marker.setRotationOrigin('bottom center')
-}
-
 const bg_types = {
     'tram': 'Трамвай',
     'trolley': 'Тролей',
@@ -334,10 +222,10 @@ function update_route_table(type, route_ref) {
         let relevant_vehicles;
         if(route_ref != 'outOfService') {
             const cgm_route_id = routes.find(route => route.type == type && route.route_ref == route_ref).cgm_id;
-            relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id && vehicle.route_ref);
+            relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id && vehicle.route_ref && !vehicle.hidden);
         }
         else {
-            relevant_vehicles = cache.filter(vehicle => vehicle.type == type && !vehicle.route_ref);
+            relevant_vehicles = cache.filter(vehicle => vehicle.type == type && !vehicle.route_ref && !vehicle.hidden);
         }
         let new_tbody = old_tbody.cloneNode();
         new_tbody.appendChild(old_tbody.children[0]);

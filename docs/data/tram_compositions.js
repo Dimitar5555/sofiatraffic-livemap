@@ -49,12 +49,3 @@ const tram_compositions = [
     [4190, 4191],
     [4192, 4193]
 ]
-
-function is_second_wagon(inv_number) {
-    return tram_compositions.some(tc => tc[1] == inv_number);
-}
-
-function get_second_wagon_of(inv_number) {
-    const result = tram_compositions.find(tc => tc[0] == inv_number);
-    return result?result[1]:false;
-}
