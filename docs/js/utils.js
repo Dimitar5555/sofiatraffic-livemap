@@ -21,21 +21,26 @@ function calculate_bearing(geo) {
     [lat1, lon1] = coords1;
     [lat2, lon2] = coords2;
 
-	lat1 = toRadians(lat1);
-	lon1 = toRadians(lon1);
-	lat2 = toRadians(lat2);
-	lon2 = toRadians(lon2);
-
 	if(lat1 == lat2 && lon1 == lon2) {
 		return null;
 	}
 
-	let y = Math.sin(lon2 - lon1) * Math.cos(lat2);
-	let x = Math.cos(lat1) * Math.sin(lat2) -
-			Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1);
-	let brng = Math.atan2(y, x);
-	brng = toDegrees(brng);
-	return Math.round(brng)-180;
+	/*
+		Using simple trigonometry to calculate bearing
+		between two points on the Earth's surface.
+
+		Using Great-circle bearing formula is not necessary
+		and too expensive for this task.
+
+		The points are quite close to each other, so the
+		approximation is acceptable and the Earth's curvature
+		can be safely ignored.
+	*/
+	const deltaLat = lat2 - lat1;
+    const deltaLon = lon2 - lon1;
+    const bearingRad = Math.atan2(deltaLon, deltaLat);
+    const bearingDeg = toDegrees(bearingRad);
+	return (bearingDeg + 360) % 360 - 180;
 }
 
 function calculate_speed(geo) {
