@@ -4,43 +4,45 @@ const MIN_ACTIVE_SPEED = 5;
 var websocket_connection = null;
 cache = [];
 
-
-function get_icon({type, route_ref, geo: { speed }}, reduce_marker) {
-    const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
-
-    const width = !reduce_marker?40:40/3; // initial 25px
-    const half_width = width/2;
-    const height = !reduce_marker?60:20; // initial 41px
-
-    const triangle_acute_point = `${half_width},${height}`;
-    const triangle_side_margin = 1.75;
-    const triangle_left_point = `${triangle_side_margin},15`;
-    const triangle_right_point = `${width-triangle_side_margin},15`;
-
-    const class_name = route_ref != null && route_ref.toString().length <= 2 ? 'large' : 'small';
-
-    const open_svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
-    const outer_circle = `<circle cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
-    const triangle = `<polygon points="${triangle_left_point} ${triangle_right_point} ${triangle_acute_point}"/>`;
-  
-    const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform="rotate(0)" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
-    const close_svg = '</svg>';
-
-    let options = {
-        iconSize: [width, height],
-        iconAnchor: [width/2, width/2],
-        popupAnchor: [0, -width/2],
-        className: `vehicle-${type}`
+function init_websocket(attempts=1) {
+    if(attempts >= 2) {
+        const el = document.querySelector('.container.mb-3');
+        const alert = document.createElement('div');
+        alert.classList.add('alert', 'alert-danger', 'text-center');
+        alert.textContent = 'Услугата е временно недостъпна. Моля опитайте по-късно.';
+        el.innerHTML = '';
+        el.appendChild(alert);
+        return;
     }
-    if(state == 'active') {
-        options.html = `${open_svg}${outer_circle}${triangle}${text}${close_svg}`;
-        options.rotationOrigin = options.iconAnchor.map(a => a+' px').join(' ');
+    websocket_connection = new WebSocket(WEBSOCKET_URL);
+    websocket_connection.onmessage = ev => {
+        let data = JSON.parse(ev.data);
+        const now = Date.now();
+
+        console.time('update cache', data.avl.length);
+        let tables_to_update = new Set();
+        for(const vehicle of data.avl) {
+            const processed = preprocess_vehicle(vehicle, now);
+            if(!processed) {
+                continue;
+            }
+            add_to_cache(processed, tables_to_update);
+        }
+        handle_tram_compositions();
+        update_map_markers();
+        console.timeEnd('update cache');
+        for(const table of tables_to_update) {
+            if(table == '') {
+                continue;
+            }
+            const [type, line] = table.split('/');
+            update_route_table(type, line);
+        }
+        apply_filters();
+    };
+    websocket_connection.onerror = () => {
+        setTimeout(() => init_websocket(attempts + 1), 1000);
     }
-    else {
-        options.html = `${open_svg}${outer_circle}${text}${close_svg}`;
-    }
-    let icon = L.divIcon(options);
-    return icon;
 }
 
 function register_vehicle_view(type, inv_number, is_marker=false) {
@@ -59,9 +61,8 @@ function init_map() {
     });
     map.invalidateSize();
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-
-    
 }
+
 var routes;
 function init_routes_tables() {
     return fetch('https://dimitar5555.github.io/sofiatraffic-schedules/data/routes.json')
@@ -245,7 +246,7 @@ function proper_inv_number(inv_number) {
 }
 
 function proper_inv_number_for_sorting(inv_number) {
-    if(typeof inv_number == 'string') {
+    if(typeof inv_number === 'string') {
         return Number(inv_number.split('+')[0]);
     }
     return proper_inv_number(inv_number);

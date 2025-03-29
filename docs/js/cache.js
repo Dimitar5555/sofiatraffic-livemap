@@ -46,47 +46,6 @@ function preprocess_vehicle(vehicle, timestamp) {
     };
 }
 
-function init_websocket(attempts=1) {
-    if(attempts >= 2) {
-        const el = document.querySelector('.container.mb-3');
-        const alert = document.createElement('div');
-        alert.classList.add('alert', 'alert-danger', 'text-center');
-        alert.textContent = 'Услугата е временно недостъпна. Моля опитайте по-късно.';
-        el.innerHTML = '';
-        el.appendChild(alert);
-        return;
-    }
-    websocket_connection = new WebSocket(WEBSOCKET_URL);
-    websocket_connection.onmessage = ev => {
-        let data = JSON.parse(ev.data);
-        const now = Date.now();
-
-        console.time('update cache', data.avl.length);
-        let tables_to_update = new Set();
-        for(const vehicle of data.avl) {
-            const processed = preprocess_vehicle(vehicle, now);
-            if(!processed) {
-                continue;
-            }
-            add_to_cache(processed, tables_to_update);
-        }
-        handle_tram_compositions();
-        update_map_markers();
-        console.timeEnd('update cache');
-        for(const table of tables_to_update) {
-            if(table == '') {
-                continue;
-            }
-            const [type, line] = table.split('/');
-            update_route_table(type, line);
-        }
-        apply_filters();
-    };
-    websocket_connection.onerror = () => {
-        setTimeout(() => init_websocket(attempts + 1), 1000);
-    }
-}
-
 function is_vehicle_in_depot(type, coords) {
     return depots_data.some(depot => 
         depot.polygon
