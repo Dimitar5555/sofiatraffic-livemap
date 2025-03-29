@@ -76,3 +76,8 @@ main {
 .svg_large {
     font-size: 18px;
 }
+
+/* Override leaflet styles */
+.leaflet-popup-content {
+    margin: 10px;
+}
