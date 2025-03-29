@@ -311,10 +311,17 @@ function populate_route_table(relevant_vehicles, tbody, type) {
     }
 }
 
+function is_screen_width_lg_or_less() {
+    return window.innerWidth <= 992;
+}
+
 function zoom_to_vehicle(type, inv_number) {
     let marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
     map.flyTo(marker._latlng, 17, { animate: false });
     marker.fireEvent('click');
+    if(is_screen_width_lg_or_less()) {
+        document.querySelector('#map').scrollIntoView({behavior: 'smooth'});
+    }
     register_vehicle_view(type, inv_number);
 }
 
