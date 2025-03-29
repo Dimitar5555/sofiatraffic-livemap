@@ -35,14 +35,6 @@
 	background-color: var(--bus-colour) !important;
 }
 
-.text-light {
-    color: #fff;
-}
-
-.d-none {
-    display: none;
-}
-
 .left-col {
     max-height: 850px;
     flex-shrink: 0;

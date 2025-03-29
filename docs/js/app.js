@@ -264,7 +264,7 @@ const bg_types = {
 };
 
 function get_route_classes(type) {
-    return [`${type}-bg-color`, 'text-light', 'px-2'];
+    return [`${type}-bg-color`, 'text-white', 'px-2'];
 }
 
 function set_route_classes(el, type, route_ref) {
