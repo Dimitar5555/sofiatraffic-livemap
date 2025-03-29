@@ -6,7 +6,6 @@ cache = [];
 
 
 function get_icon({type, route_ref, geo: { speed }}, reduce_marker) {
-    console.log(reduce_marker)
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
 
     const width = !reduce_marker?40:40/3; // initial 25px
