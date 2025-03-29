@@ -1,17 +1,3 @@
-function normalise_number(number) {
-    return Number(number.replace(/[a-z]/gi, ''));
-}
-
-function determine_vehicle_location(vehicle, depots) {
-	// for(const depot of depots) {
-	// 	let vehicle_depot = is_vehicle_in_depot(vehicle, depot);
-	// 	if(vehicle_depot) {
-	// 		return {name: depot.tags.name, type: depot.tags.depot};
-	// 	}
-	// }
-	return false;
-}
-
 function calculate_bearing(geo) {
     let [coords1, coords2] = [geo.prev.coords, geo.curr.coords];
     if(!coords1 || !coords2 || coords1.length != 2 || coords2.length != 2) {
