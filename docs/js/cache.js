@@ -189,6 +189,8 @@ function add_to_cache(vehicle, tables_to_update) {
             }
         }
 
+        cache_entry.reduce_marker = vehicle.reduce_marker;
+
         if(vehicle.route_ref != cache_entry.route_ref) {
             tables_to_update.add(`${cache_entry.type}/${cache_entry.route_ref}`);
             tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
