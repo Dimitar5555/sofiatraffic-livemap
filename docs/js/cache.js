@@ -132,16 +132,15 @@ function determine_inv_number(vehicle) {
         return type == 'trolley' && is_inv_in_range;
     }
 
-    let inv_number = Number(vehicle.vehicleId.replace(/[a-z]/gi, ''));
+    const inv_number = Number(vehicle.vehicleId.replace(/[a-z]/gi, ''));
 
     if(is_fake_trolley(vehicle.type, inv_number)) {
         vehicle.type = 'bus';
         // Avoid conflicts between Tramkar ebuses and Malashevtsi buses
         if(2501 <= inv_number && inv_number <= 2505) {
-            inv_number *= 10;
+            return inv_number * 10;
         }
     }
-    
     return inv_number;
 }
 
