@@ -9,10 +9,8 @@ function preprocess_vehicle(vehicle, timestamp) {
         'tram': 'TM'
     };
     const cgm_route_id = `${cgm_types[vehicle.type]}${vehicle.line}`;
-    determine_inv_number(vehicle);
-    const type = vehicle.type;
-
     const inv_number = determine_inv_number(vehicle);
+    const type = vehicle.type;
     if(inv_number == '' || inv_number == 8888) {
         return false;
     }
