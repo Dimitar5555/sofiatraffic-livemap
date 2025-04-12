@@ -81,9 +81,15 @@ function handle_tram_compositions() {
         const second_wagon_coords = second_wagon_entry.geo.curr.coords;
         const distance = caclulate_distance(first_wagon_coords, second_wagon_coords);
         if(distance > 500) {
-            first_wagon_entry.hidden = false;
-            second_wagon_entry.hidden = false;
-            composition_entry.hidden = true;
+            if(first_wagon_entry) {
+                first_wagon_entry.hidden = false;
+            }
+            if(second_wagon_entry) {
+                second_wagon_entry.hidden = false;
+            }
+            if(composition_entry) {
+                composition_entry.hidden = true;
+            }
             continue;
         }
 
