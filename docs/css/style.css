@@ -9,8 +9,8 @@
 }
 
 #map {
-    /* width: 1800px; */
-    height: 850px;
+    height: 100%;
+    min-height: 850px;
 }
 
 .vehicle-tram > svg {

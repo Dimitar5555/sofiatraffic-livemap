@@ -139,10 +139,6 @@ window.onload = async () => {
     init_depots();
     init_websocket();
     init_selectors();
-
-    setTimeout(() => {
-        document.querySelector('#remove_after_20s').remove();
-    }, 20 * 1000);
 };
 
 const bg_types = {
