@@ -1,4 +1,9 @@
-function preprocess_vehicle(vehicle, timestamp) {
+import { booleanPointInPolygon } from '@turf/boolean-point-in-polygon';
+
+import { MIN_ACTIVE_SPEED } from './config';
+import { caclulate_distance, calculate_bearing, calculate_speed } from './utils';
+
+export function preprocess_vehicle(vehicle, timestamp, routes) {
     if(are_coords_invalid([vehicle.latitude, vehicle.longitude])) {
         return false;
     }
@@ -48,7 +53,7 @@ function is_vehicle_in_depot(type, coords) {
     return depots_data.some(depot => 
         depot.polygon
         && (depot.type == type || depot.type.includes(type))
-        && turf.booleanPointInPolygon(coords, depot.polygon)
+        && booleanPointInPolygon(coords, depot.polygon)
     )
 }
 
@@ -56,7 +61,7 @@ function are_coords_invalid([lat, lon]) {
     return lat == 0 && lon == 0;
 }
 
-function handle_tram_compositions() {
+export function handle_tram_compositions(cache) {
     for(const composition of tram_compositions) {
         const [first_wagon, second_wagon] = composition;
         const first_wagon_entry = cache.find(entry => entry.inv_number == first_wagon);
@@ -150,7 +155,7 @@ function determine_inv_number(vehicle) {
     return inv_number;
 }
 
-function add_to_cache(vehicle, tables_to_update) {
+export function add_to_cache(vehicle, tables_to_update, cache) {
     let cache_entry = cache.find(entry => entry.type === vehicle.type && entry.inv_number === vehicle.inv_number);
     
     let changed_state = false;
@@ -162,7 +167,7 @@ function add_to_cache(vehicle, tables_to_update) {
         else {
             tables_to_update.add(`${vehicle.type}/outOfService`);
         }
-        changed_route = true;
+        // changed_route = true;
     }
     else {
         const same_timestamp = cache_entry.geo.curr.timestamp === vehicle.geo.curr.timestamp;
@@ -176,7 +181,7 @@ function add_to_cache(vehicle, tables_to_update) {
         const old_bearing = cache_entry.geo.bearing;
         const new_bearing = calculate_bearing(cache_entry.geo);
         if(old_bearing !== new_bearing) {
-            changed_bearing = true;
+            // changed_bearing = true;
             cache_entry.geo.bearing = new_bearing;
         }
 
@@ -199,10 +204,10 @@ function add_to_cache(vehicle, tables_to_update) {
             tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
             cache_entry.route_ref = vehicle.route_ref;
             cache_entry.cgm_route_id = vehicle.cgm_route_id;
-            changed_route = true;
+            // changed_route = true;
         }
     }
     if(changed_state) {
-        changed_bearing = true;
+        // changed_bearing = true;
     }
 }

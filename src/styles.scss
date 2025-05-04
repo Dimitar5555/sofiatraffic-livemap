@@ -1,3 +1,8 @@
+@import "/node_modules/bootstrap/scss/bootstrap.scss";
+@import "/node_modules/bootstrap-icons/font/bootstrap-icons.css";
+@import "/node_modules/leaflet/dist/leaflet.css";
+@import "/node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css";
+
 :root {
     --tram-colour: #f6921e;
     --trolley-colour: #0095da;

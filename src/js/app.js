@@ -1,10 +1,21 @@
-const WEBSOCKET_URL = 'wss://damp-unit-e9e4.bulgariadb.workers.dev/';
-const DEBUG_MODE = false;
-const MIN_ACTIVE_SPEED = 5;
+import { polygon } from 'turf';
+import 'leaflet';
+import 'leaflet-rotatedmarker';
+import { LocateControl } from 'leaflet.locatecontrol';
+
+import { preprocess_vehicle, handle_tram_compositions, add_to_cache } from './cache';
+import { update_map_markers } from './map';
+import { WEBSOCKET_URL } from './config';
+import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, register_vehicle_view } from './utils';
+
 var websocket_connection = null;
-cache = [];
+var cache = [];
 
 function init_websocket(attempts=1) {
+    if(websocket_connection !== null) {
+        websocket_connection.close();
+        websocket_connection = null;
+    }
     if(attempts >= 2) {
         const el = document.querySelector('.container.mb-3');
         const alert = document.createElement('div');
@@ -29,14 +40,14 @@ function init_websocket(attempts=1) {
                 continue;
             }
             already_processed.add(vehicle.vehicleId);
-            const processed = preprocess_vehicle(vehicle, now);
+            const processed = preprocess_vehicle(vehicle, now, routes);
             if(!processed) {
                 continue;
             }
-            add_to_cache(processed, tables_to_update);
+            add_to_cache(processed, tables_to_update, cache);
         }
-        handle_tram_compositions();
-        update_map_markers();
+        handle_tram_compositions(cache);
+        update_map_markers(cache, map);
         console.timeEnd('update cache');
         for(const table of tables_to_update) {
             if(table == '') {
@@ -52,15 +63,6 @@ function init_websocket(attempts=1) {
     }
 }
 
-function register_vehicle_view(type, inv_number, is_marker=false) {
-    console.log(`view_vehicle: ${type} ${inv_number}`);
-    gtag('event', 'view_vehicle', {
-        'event_category': 'vehicle',
-        'event_label': `${type} ${inv_number}`,
-        'value': is_marker
-    });
-}
-
 function init_map() {
     map = L.map('map', {
         center: [42.69671, 23.32129],
@@ -68,9 +70,10 @@ function init_map() {
     });
     map.invalidateSize();
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+    new LocateControl().addTo(map);
 }
 
-var routes;
+var routes = [];
 function init_routes_tables() {
     return fetch('https://dimitar5555.github.io/sofiatraffic-schedules/data/routes.json')
     .then(data => data.json())
@@ -131,9 +134,9 @@ function init_depots() {
     depots_data.forEach(depot => {
         if(!depot.hide && depot.geometry) {
             if(depot.geometry) {
-                depot.polygon = turf.polygon(depot.geometry);
+                depot.polygon = polygon(depot.geometry);
                 for(const geometry of depot.geometry) {
-                    L.polygon(geometry).addTo(map);
+                    L.polygon(geometry).addTo(map).bindPopup(depot.name);
                 }
             }
         }
@@ -147,21 +150,6 @@ window.onload = async () => {
     init_websocket();
     init_selectors();
 };
-
-const bg_types = {
-    'tram': 'Трамвай',
-    'trolley': 'Тролей',
-    'bus': 'Автобус'
-};
-
-function get_route_classes(type) {
-    return [`${type}-bg-color`, 'text-white', 'px-2'];
-}
-
-function set_route_classes(el, type, route_ref) {
-    el.classList.add(...get_route_classes(type), 'text-center');
-    el.innerText = `${bg_types[type]} ${route_ref}`;
-}
 
 function generate_route_table(type, route_ref) {
     let tbody = document.createElement('tbody');
@@ -196,8 +184,12 @@ function populate_route_table(relevant_vehicles, tbody, type) {
         {
             let td = document.createElement('td');
             td.classList.add('text-center', 'align-middle')
-            td.innerHTML = `<button class="btn btn-outline-success" onclick="zoom_to_vehicle('${vehicle.type}', '${vehicle.inv_number}')" title="Покажи на картата"><i class="bi bi-crosshair"></i></button>`;
+            td.innerHTML = `<button class="btn btn-outline-success" title="Покажи на картата"><i class="bi bi-crosshair"></i></button>`;
             tr.appendChild(td);
+            td.childNodes[0].addEventListener('click', (e) => {
+                zoom_to_vehicle(vehicle.type, vehicle.inv_number);
+                e.stopPropagation();
+            });
         }
         tbody.appendChild(tr);
     }
@@ -209,7 +201,7 @@ function is_screen_width_lg_or_less() {
 
 function zoom_to_vehicle(type, inv_number) {
     let marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
-    map.flyTo(marker._latlng, 17, { animate: false });
+    map.flyTo(marker.getLatLng(), 17, { animate: false });
     marker.fireEvent('click');
     if(is_screen_width_lg_or_less()) {
         document.querySelector('#map').scrollIntoView({behavior: 'smooth'});
@@ -236,21 +228,8 @@ function update_route_table(type, route_ref) {
         populate_route_table(relevant_vehicles, new_tbody, type)
         old_tbody.replaceWith(new_tbody);
     }
-    catch {
-        console.log(`#${type}_${route_ref}`);
+    catch (err){
+        console.error(err)
+        console.log(old_tbody, route_ref,`#${type}_${route_ref}`);
     }
-}
-
-function proper_inv_number(inv_number) {
-    if(typeof inv_number == 'number' && inv_number > 9000) {
-        return inv_number/10;
-    }
-    return inv_number;
-}
-
-function proper_inv_number_for_sorting(inv_number) {
-    if(typeof inv_number === 'string') {
-        return Number(inv_number.split('+')[0]);
-    }
-    return proper_inv_number(inv_number);
 }

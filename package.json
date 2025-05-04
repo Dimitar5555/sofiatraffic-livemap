@@ -2,11 +2,13 @@
   "name": "sofiatraffic-livemap",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
+    "build-github": "parcel build ./src/index.html --public-url /sofiatraffic-livemap/",
+    "build": "parcel build ./src/index.html",
+    "dev": "parcel serve ./src/index.html",
     "serve": "http-server ./docs -c-1 -g -b",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,6 +16,17 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@parcel/transformer-sass": "^2.14.4",
     "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.2.0",
+    "bootstrap": "^5.3.5",
+    "bootstrap-icons": "^1.12.1",
+    "leaflet": "^1.9.4",
+    "leaflet-rotatedmarker": "^0.2.0",
+    "leaflet.locatecontrol": "^0.84.2",
+    "parcel": "^2.14.4",
+    "turf": "^3.0.14"
   }
 }

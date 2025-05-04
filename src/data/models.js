@@ -19,7 +19,7 @@ const models = {
             gauge: 1009,
             inv_number_ranges: [
                 [2033, 2034],
-                [3001, 3037]
+                [3001, 3040]
             ]
         },
         {

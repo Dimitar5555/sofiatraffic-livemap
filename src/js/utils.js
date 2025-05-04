@@ -1,11 +1,13 @@
-function calculate_bearing(geo) {
+import { BG_TYPES } from './config';
+
+export function calculate_bearing(geo) {
     let [coords1, coords2] = [geo.prev.coords, geo.curr.coords];
     if(!coords1 || !coords2 || coords1.length != 2 || coords2.length != 2) {
         return null;
     }
 
-    [lat1, lon1] = coords1;
-    [lat2, lon2] = coords2;
+    const [lat1, lon1] = coords1;
+    const [lat2, lon2] = coords2;
 
 	if(lat1 == lat2 && lon1 == lon2) {
 		return null;
@@ -29,7 +31,7 @@ function calculate_bearing(geo) {
 	return (bearingDeg + 360) % 360 - 180;
 }
 
-function calculate_speed(geo) {
+export function calculate_speed(geo) {
     let [start_coords, start_time, end_coords, end_time] = [geo.prev.coords, geo.prev.timestamp, geo.curr.coords, geo.curr.timestamp];
     if(!start_coords || !end_coords || start_coords.length != 2 || end_coords.length != 2) {
         return -2;
@@ -52,7 +54,7 @@ function toDegrees(radians) {
 	return radians * (180 / Math.PI);
 }
 
-function caclulate_distance([lat1, lon1], [lat2, lon2]) {
+export function caclulate_distance([lat1, lon1], [lat2, lon2]) {
     if(lat1 == lat2 && lon1 == lon2) {
         return 0;
     }
@@ -69,4 +71,36 @@ function caclulate_distance([lat1, lon1], [lat2, lon2]) {
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   
 	return R * c; // in meters
+}
+
+export function proper_inv_number(inv_number) {
+    if(typeof inv_number == 'number' && inv_number > 9000) {
+        return inv_number/10;
+    }
+    return inv_number;
+}
+
+export function proper_inv_number_for_sorting(inv_number) {
+    if(typeof inv_number === 'string') {
+        return Number(inv_number.split('+')[0]);
+    }
+    return proper_inv_number(inv_number);
+}
+
+export function get_route_classes(type) {
+    return [`${type}-bg-color`, 'text-white', 'px-2'];
+}
+
+export function set_route_classes(el, type, route_ref) {
+    el.classList.add(...get_route_classes(type), 'text-center');
+    el.innerText = `${BG_TYPES[type]} ${route_ref}`;
+}
+
+export function register_vehicle_view(type, inv_number, is_marker=false) {
+    console.log(`view_vehicle: ${type} ${inv_number}`);
+    gtag('event', 'view_vehicle', {
+        'event_category': 'vehicle',
+        'event_label': `${type} ${inv_number}`,
+        'value': is_marker
+    });
 }

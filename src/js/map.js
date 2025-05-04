@@ -1,3 +1,6 @@
+import { BG_TYPES, MIN_ACTIVE_SPEED } from './config';
+import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
+
 function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
     const correct_inv_number = proper_inv_number(inv_number);
     const classes = get_route_classes(type).join(' ');
@@ -6,7 +9,7 @@ function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
         text = 'Няма маршрут';
     }
     else {
-        text = `${bg_types[type]} ${route_ref}`;
+        text = `${BG_TYPES[type]} ${route_ref}`;
     }
     const model = get_vehicle_model(inv_number, type);
     const model_text = `${model?.name} ${model?.fuel?model.fuel:''} ${model?.length?'('+model.length+' m)':''}`;
@@ -20,7 +23,7 @@ function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
 }
 
 function generate_tooltip_text({ inv_number, type }) {
-    return `${bg_types[type]} ${proper_inv_number(inv_number)}`;
+    return `${BG_TYPES[type]} ${proper_inv_number(inv_number)}`;
 }
 
 function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
@@ -74,7 +77,7 @@ function create_marker(vehicle) {
     return marker;
 }
 
-function update_map_markers() {
+export function update_map_markers(cache, map) {
     for(const vehicle of cache) {
         if(vehicle.hidden && vehicle.marker) {
             vehicle.marker.remove();
