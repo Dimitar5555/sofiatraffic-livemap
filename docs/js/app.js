@@ -20,8 +20,15 @@ function init_websocket(attempts=1) {
         const now = Date.now();
 
         console.time('update cache', data.avl.length);
-        let tables_to_update = new Set();
+        const tables_to_update = new Set();
+        const already_processed = new Set();
+        data.avl.reverse();
         for(const vehicle of data.avl) {
+            if(already_processed.has(vehicle.vehicleId)) {
+                console.log('already processed', vehicle.vehicleId);
+                continue;
+            }
+            already_processed.add(vehicle.vehicleId);
             const processed = preprocess_vehicle(vehicle, now);
             if(!processed) {
                 continue;
