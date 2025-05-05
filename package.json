@@ -9,15 +9,13 @@
     "build-github": "parcel build ./src/index.html --public-url /sofiatraffic-livemap/",
     "build": "parcel build ./src/index.html",
     "dev": "parcel serve ./src/index.html",
-    "serve": "http-server ./docs -c-1 -g -b",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.14.4",
-    "http-server": "^14.1.1"
+    "@parcel/transformer-sass": "^2.14.4"
   },
   "dependencies": {
     "@turf/turf": "^7.2.0",
