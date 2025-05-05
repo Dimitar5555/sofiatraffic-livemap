@@ -36,7 +36,6 @@ function init_websocket(attempts=1) {
         data.avl.reverse();
         for(const vehicle of data.avl) {
             if(already_processed.has(vehicle.vehicleId)) {
-                console.log('already processed', vehicle.vehicleId);
                 continue;
             }
             already_processed.add(vehicle.vehicleId);
