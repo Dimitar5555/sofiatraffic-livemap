@@ -64,8 +64,10 @@ function are_coords_invalid([lat, lon]) {
 export function handle_tram_compositions(cache) {
     for(const composition of tram_compositions) {
         const [first_wagon, second_wagon] = composition;
-        const first_wagon_entry = cache.find(entry => entry.inv_number == first_wagon);
-        const second_wagon_entry = cache.find(entry => entry.inv_number == second_wagon);
+
+        const first_wagon_entry = cache.find(entry => entry.inv_number == first_wagon && entry.type == 'tram');
+        const second_wagon_entry = cache.find(entry => entry.inv_number == second_wagon && entry.type == 'tram');
+
         const composition_inv_number = `${first_wagon}+${second_wagon}`;
         const composition_entry = cache.find(entry => entry.inv_number == composition_inv_number);
 
