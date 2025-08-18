@@ -33,7 +33,6 @@ function init_websocket(attempts=1) {
         console.time('update cache', data.avl.length);
         const tables_to_update = new Set();
         const already_processed = new Set();
-        data.avl.reverse();
         for(const vehicle of data.avl) {
             if(already_processed.has(vehicle.vehicleId)) {
                 continue;
