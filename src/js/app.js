@@ -75,7 +75,7 @@ function init_map() {
 
 var routes = [];
 function init_routes_tables() {
-    return fetch('https://dimitar5555.github.io/sofiatraffic-schedules/data/routes.json')
+    return fetch('https://raw.githubusercontent.com/Dimitar5555/sofiatraffic-schedules/refs/heads/master/data/routes.json')
     .then(data => data.json())
     .then(r => {
         routes = r.filter(route => route.type != 'metro');
