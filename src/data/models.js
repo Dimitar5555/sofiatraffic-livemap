@@ -274,5 +274,5 @@ function get_vehicle_model(inv_number, type) {
             }
         }
     }
-    return null;
+    return { name: "Неизвестен модел" };
 }
