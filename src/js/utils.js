@@ -74,7 +74,7 @@ export function caclulate_distance([lat1, lon1], [lat2, lon2]) {
 }
 
 export function proper_inv_number(inv_number) {
-    if(typeof inv_number == 'number' && inv_number > 9000) {
+    if(typeof inv_number == 'number' && inv_number > 9999) {
         return inv_number/10;
     }
     return inv_number;
