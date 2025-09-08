@@ -66,11 +66,43 @@ var map = null;
 function init_map() {
     map = L.map('map', {
         center: [42.69671, 23.32129],
-        zoom: 13
+        zoom: 13,
+        zoomControl: false
+        
     });
     map.invalidateSize();
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
-    new LocateControl().addTo(map);
+
+    L.Control.OpenLeftPanel = L.Control.extend({
+        onAdd: function() {
+            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+            
+            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+            
+            const span = L.DomUtil.create('i', 'fw-bolder fs-3');
+            span.innerText = '>';
+            
+            a.appendChild(span);
+            div.appendChild(a);
+
+            div.onclick = function() {
+                const left_panel = document.querySelector('#left_panel');
+                if(left_panel.classList.contains('d-none')) {
+                    left_panel.classList.remove('d-none');
+                }
+            }
+            
+            return div;
+        }
+    });
+    L.control.openLeftPanel = function(opts) {
+        return new L.Control.OpenLeftPanel(opts);
+    };
+    L.control.openLeftPanel({ position: 'topleft' }).addTo(map);
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+    new LocateControl({position: 'topright'}).addTo(map);
 }
 
 var routes = [];
@@ -200,12 +232,13 @@ function is_screen_width_lg_or_less() {
 }
 
 function zoom_to_vehicle(type, inv_number) {
-    let marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
+    const marker = cache.find(v => v.type == type && v.inv_number == inv_number).marker;
+    const left_panel = document.querySelector('#left_panel');
+    if(is_screen_width_lg_or_less()){
+        left_panel.classList.add('d-none');
+    }
     map.flyTo(marker.getLatLng(), 17, { animate: false });
     marker.fireEvent('click');
-    if(is_screen_width_lg_or_less()) {
-        document.querySelector('#map').scrollIntoView({behavior: 'smooth'});
-    }
     register_vehicle_view(type, inv_number);
 }
 

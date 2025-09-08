@@ -11,9 +11,9 @@
     --top-right-distance-inner-dot: calc((var(--marker-outer-size) - var(--marker-inner-size)) / 2);
 }
 
-#map {
-    height: 100%;
-    min-height: 850px;
+#left_panel {
+    z-index: 1100;
+    background-color: #fff;
 }
 
 .vehicle-tram > svg {
@@ -28,30 +28,12 @@
     fill: var(--bus-color);
 }
 
-.left-col {
-    max-height: 850px;
-    flex-shrink: 0;
-
-}
-
 .table-container {
-    flex-shrink: 1;
     overflow-y: auto;
-    max-height: 800px; /* Same height as the map */
 }
 
 .lh-100 {
     line-height: 100%;
-}
-
-body {
-    display: flex;
-    min-height: 100vh;
-    flex-direction: column;
-}
-  
-main {
-    flex: 1;
 }
 
 .svg_text {
@@ -70,7 +52,6 @@ main {
     font-size: 18px;
 }
 
-/* Override leaflet styles */
 .leaflet-popup-content {
-    margin: 10px;
+    margin: 10px 5px;
 }
