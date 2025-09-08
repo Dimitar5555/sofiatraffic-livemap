@@ -200,31 +200,24 @@ function generate_route_table(type, route_ref) {
 
 function populate_route_table(relevant_vehicles, tbody, type) {
     relevant_vehicles.sort((a, b) => proper_inv_number_for_sorting(a.inv_number)-proper_inv_number_for_sorting(b.inv_number));
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
     for(const vehicle of relevant_vehicles) {
-        let tr = document.createElement('tr');
-        let vehicle_inv_number = typeof vehicle.inv_number == 'string' ? vehicle.inv_number.split('+')[0] : vehicle.inv_number;
+        const btn = document.createElement('button');
+        btn.classList.add('vehicle-btn', 'btn', 'btn-outline-dark', 'btn-sm');
+        btn.addEventListener('click', (e) => {
+            zoom_to_vehicle(vehicle.type, vehicle.inv_number);
+        });
+        const vehicle_inv_number = typeof vehicle.inv_number == 'string' ? vehicle.inv_number.split('+')[0] : vehicle.inv_number;
         const depot = get_vehicle_depot(vehicle_inv_number, vehicle.type);
-        tr.setAttribute('data-depot-id', depot.id);
-        tr.setAttribute('data-inv-number', vehicle.inv_number);
-        // tr.setAttribute('data-type', type);
-        {
-            let td = document.createElement('td');
-            td.classList.add('text-center', 'align-middle', 'lh-100')
-            td.innerText = proper_inv_number(vehicle.inv_number);
-            tr.appendChild(td);
-        }
-        {
-            let td = document.createElement('td');
-            td.classList.add('text-center', 'align-middle')
-            td.innerHTML = `<button class="btn btn-outline-success" title="Покажи на картата"><i class="bi bi-crosshair"></i></button>`;
-            tr.appendChild(td);
-            td.childNodes[0].addEventListener('click', (e) => {
-                zoom_to_vehicle(vehicle.type, vehicle.inv_number);
-                e.stopPropagation();
-            });
-        }
-        tbody.appendChild(tr);
+        btn.setAttribute('data-depot-id', depot.id);
+        btn.setAttribute('data-inv-number', vehicle.inv_number);
+        btn.classList.add('text-center', 'align-middle')
+        btn.innerText = proper_inv_number(vehicle.inv_number);
+        td.appendChild(btn);
     }
+    tr.appendChild(td);
+    tbody.appendChild(tr);
 }
 
 function is_screen_width_lg_or_less() {

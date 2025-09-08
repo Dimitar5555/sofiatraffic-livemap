@@ -1,5 +1,3 @@
-import { BG_TYPES } from './config';
-
 export function calculate_bearing(geo) {
     let [coords1, coords2] = [geo.prev.coords, geo.curr.coords];
     if(!coords1 || !coords2 || coords1.length != 2 || coords2.length != 2) {
@@ -100,7 +98,12 @@ export function get_route_classes(type, route_ref) {
 
 export function set_route_classes(el, type, route_ref) {
     el.classList.add(...get_route_classes(type, route_ref), 'text-center');
-    el.innerText = `${BG_TYPES[type]} ${route_ref}`;
+    const BG_TYPES_HTML = {
+        'tram': `<i class="icon tram-icon"></i>`,
+        'trolley': `<i class="icon trolley-icon"></i>`,
+        'bus': `<i class="icon bus-icon"></i>`
+    }
+    el.innerHTML = `${BG_TYPES_HTML[type]} ${route_ref}`;
 }
 
 export function register_vehicle_view(type, inv_number, is_marker=false) {

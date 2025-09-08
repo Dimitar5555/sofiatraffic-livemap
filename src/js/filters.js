@@ -24,7 +24,7 @@ function filter_by_all_params(type, depot_id, inv_number) {
             continue;
         }
         let has_vehicles = false;
-        const trs = Array.from(tbody.querySelectorAll('tr[data-depot-id]'));
+        const trs = Array.from(tbody.querySelectorAll('button[data-depot-id]'));
         for(let tr of trs) {
             let is_depot_ok = depot_id == 0 || tr.dataset.depotId == depot_id;
             let is_inv_number_ok = inv_number == 0 

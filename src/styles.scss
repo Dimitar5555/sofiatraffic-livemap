@@ -14,6 +14,7 @@
 #left_panel {
     z-index: 1100;
     background-color: #fff;
+    max-width: 250px;;
 }
 
 .vehicle-tram > svg {
@@ -55,3 +56,32 @@
 .leaflet-popup-content {
     margin: 10px 5px;
 }
+
+.vehicle-btn {
+    min-width: 50px;
+    margin: 2px;
+    
+}
+
+.icon {
+    width: 18px;
+    height: 18px;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    vertical-align: sub;
+    display: inline-block;
+}
+
+.tram-icon {
+    background-image: url('/src/images/tram.png');
+}
+
+.trolley-icon {
+    background-image: url('/src/images/trolley.png');
+}
+
+.bus-icon {
+    background-image: url('/src/images/bus.png');
+}
+
