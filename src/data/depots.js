@@ -1,6 +1,6 @@
 const depots_data = [
     {
-        id: 1,
+        id: 'banishora',
         type: 'tram',
         name: 'Банишора',
         inv_number_ranges: [
@@ -52,7 +52,7 @@ const depots_data = [
         ]
     },
     {
-        id: 2,
+        id: 'krasna_polyana',
         type: 'tram',
         name: 'Красна поляна',
         inv_number_ranges: [
@@ -81,7 +81,7 @@ const depots_data = [
         ]
     },
     {
-        id: 3,
+        id: 'krasno_selo',
         type: ['tram', 'bus'],
         name: 'Красно село',
         inv_number_ranges: [
@@ -115,7 +115,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 4,
+        id: 'iskar_tram',
         type: 'tram',
         name: 'Искър',
         inv_number_ranges: [
@@ -141,7 +141,7 @@ const depots_data = [
         ]
     },
     {
-        id: 5,
+        id: 'iskar_trolley',
         type: ['trolley', 'bus'],
         name: 'Искър',
         inv_number_ranges: [
@@ -170,7 +170,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 6,
+        id: 'nadezhda',
         type: ['trolley', 'bus'],
         name: 'Надежда',
         inv_number_ranges: [
@@ -196,7 +196,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 7,
+        id: 'levski',
         type: 'trolley',
         name: 'Левски',
         hide: true,
@@ -215,7 +215,7 @@ const depots_data = [
         ]    
     },
     {
-        id: 8,
+        id: 'zemlyane_bus',
         type: 'bus',
         name: 'Земляне',
         inv_number_ranges: [
@@ -279,7 +279,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 9,
+        id: 'malashevtsi',
         type: 'bus',
         name: 'Малашевци',
         inv_number_ranges: [
@@ -316,7 +316,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 10,
+        id: 'druzhba',
         type: 'bus',
         name: 'Дружба',
         inv_number_ranges: [
@@ -342,7 +342,7 @@ const depots_data = [
         ]          
     },
     {
-        id: 11,
+        id: 'mtk',
         type: 'bus',
         name: 'МТК',
         inv_number_ranges: [
@@ -350,20 +350,6 @@ const depots_data = [
         ]
     }
 ];
-
-const depots_by_name = {
-    banishora: depots_data[0],
-    krasna_polyana: depots_data[1],
-    krasno_selo: depots_data[2],
-    iskar_tram: depots_data[3],
-    iskar_trolley: depots_data[4],
-    nadezhda: depots_data[5],
-    levski: depots_data[6],
-    zemlyane: depots_data[7],
-    malashevtsi: depots_data[8],
-    druzhba: depots_data[9],
-    mtk: depots_data[10]
-};
 
 function is_inv_number_in_range(inv_number, range) {
     if(typeof range === 'object') {
@@ -396,3 +382,8 @@ function get_vehicle_depot(inv_number, type) {
     }
     return null;
 }
+
+const depots_by_name = depots_data.reduce((obj, depot) => {
+    obj[depot.id] = depot;
+    return obj;
+}, {});
