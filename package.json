@@ -25,6 +25,7 @@
     "leaflet-rotatedmarker": "^0.2.0",
     "leaflet.locatecontrol": "^0.84.2",
     "parcel": "^2.14.4",
+    "sofiatraffic-library": "github:dimitar5555/sofiatraffic-library#master",
     "turf": "^3.0.14"
   }
 }

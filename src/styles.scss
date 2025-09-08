@@ -3,11 +3,9 @@
 @import "/node_modules/leaflet/dist/leaflet.css";
 @import "/node_modules/leaflet.locatecontrol/dist/L.Control.Locate.min.css";
 
+@import "/node_modules/sofiatraffic-library/common.scss";
+
 :root {
-    --tram-colour: #f6921e;
-    --trolley-colour: #0095da;
-    --bus-colour: #be1e2d;
-    
     --marker-outer-size: 25px;
     --marker-inner-size: 9px;
     --top-right-distance-inner-dot: calc((var(--marker-outer-size) - var(--marker-inner-size)) / 2);
@@ -19,25 +17,15 @@
 }
 
 .vehicle-tram > svg {
-    fill: var(--tram-colour);
+    fill: var(--tram-color);
 }
 
 .vehicle-trolley > svg {
-    fill: var(--trolley-colour);
+    fill: var(--trolley-color);
 }
 
 .vehicle-bus > svg {
-    fill: var(--bus-colour);
-}
-
-.tram-bg-color {
-	background-color: var(--tram-colour) !important;
-}
-.trolley-bg-color {
-	background-color: var(--trolley-colour) !important;
-}
-.bus-bg-color {
-	background-color: var(--bus-colour) !important;
+    fill: var(--bus-color);
 }
 
 .left-col {

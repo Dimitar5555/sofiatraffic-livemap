@@ -87,12 +87,19 @@ export function proper_inv_number_for_sorting(inv_number) {
     return proper_inv_number(inv_number);
 }
 
-export function get_route_classes(type) {
-    return [`${type}-bg-color`, 'text-white', 'px-2'];
+export function get_route_classes(type, route_ref) {
+    const to_return = ['text-white', 'px-2'];
+    if(typeof route_ref === 'string' && route_ref.startsWith('N')) {
+        to_return.push('night-bg-color');
+    }
+    else {
+        to_return.push(`${type}-bg-color`);
+    }
+    return to_return;
 }
 
 export function set_route_classes(el, type, route_ref) {
-    el.classList.add(...get_route_classes(type), 'text-center');
+    el.classList.add(...get_route_classes(type, route_ref), 'text-center');
     el.innerText = `${BG_TYPES[type]} ${route_ref}`;
 }
 

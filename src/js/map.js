@@ -1,9 +1,9 @@
 import { BG_TYPES, MIN_ACTIVE_SPEED } from './config';
 import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
 
-function generate_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
+function generate_vehicle_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
     const correct_inv_number = proper_inv_number(inv_number);
-    const classes = get_route_classes(type).join(' ');
+    const classes = get_route_classes(type, route_ref).join(' ');
     let text;
     if(!route_ref) {
         text = 'Няма маршрут';
@@ -111,7 +111,7 @@ export function update_map_markers(cache, map) {
                     return;
                 }
                 const vehicle = cache.find(v => v.marker == e.target);
-                const popup_text = generate_popup_text(vehicle);
+                const popup_text = generate_vehicle_popup_text(vehicle);
                 e.target.bindPopup(popup_text, popup_options).openPopup();
                 register_vehicle_view(vehicle.type, vehicle.inv_number, true);
             })
@@ -141,7 +141,7 @@ export function update_map_markers(cache, map) {
                 const popup = e.target.getPopup();
                 if(popup) {
                     const vehicle = cache.find(v => v.marker == e.target);
-                    const popup_text = generate_popup_text(vehicle);
+                    const popup_text = generate_vehicle_popup_text(vehicle);
                     popup.setContent(popup_text);
                 }
             });
