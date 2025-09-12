@@ -47,12 +47,12 @@ function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
     const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform="rotate(0)" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
     const close_svg = '</svg>';
     
-
-    let options = {
+    const route_type = typeof route_ref === 'string' && route_ref.startsWith('N') ? 'night' : type;
+    const options = {
         iconSize: [width, height],
         iconAnchor: [width/2, width/2],
         popupAnchor: [0, -width/2],
-        className: `vehicle-${type}`
+        className: `vehicle-${route_type}`
     }
     if(state == 'active') {
         options.html = `${open_svg}${outer_circle}${triangle}${text}${close_svg}`;

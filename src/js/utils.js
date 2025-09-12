@@ -101,9 +101,10 @@ export function set_route_classes(el, type, route_ref) {
     const BG_TYPES_HTML = {
         'tram': `<i class="icon tram-icon"></i>`,
         'trolley': `<i class="icon trolley-icon"></i>`,
-        'bus': `<i class="icon bus-icon"></i>`
+        'bus': `<i class="icon bus-icon"></i>`,
+        'night': `<i class="icon night-icon"></i>`
     }
-    el.innerHTML = `${BG_TYPES_HTML[type]} ${route_ref}`;
+    el.innerHTML = `${BG_TYPES_HTML[route_ref.startsWith('N') ? 'night' : type]} ${route_ref}`;
 }
 
 export function register_vehicle_view(type, inv_number, is_marker=false) {

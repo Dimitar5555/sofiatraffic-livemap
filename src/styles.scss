@@ -29,6 +29,10 @@
     fill: var(--bus-color);
 }
 
+.vehicle-night > svg {
+    fill: var(--night-bus-color);
+}
+
 .table-container {
     overflow-y: auto;
 }
@@ -83,5 +87,9 @@
 
 .bus-icon {
     background-image: url('/src/images/bus.png');
+}
+
+.night-icon {
+    background-image: url('/src/images/night.png');
 }
 
