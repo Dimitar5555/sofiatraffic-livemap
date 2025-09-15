@@ -1,4 +1,4 @@
-const depots_data = [
+export const depots_data = [
     {
         id: 'banishora',
         type: 'tram',
@@ -147,7 +147,7 @@ const depots_data = [
         inv_number_ranges: [
             ['trolley', [1000, 1999]],
             ['bus', 1703],
-            ['bus', [5000, 5038]]
+            ['bus', [5000, 5037]]
         ],
         geometry: [
             [
@@ -175,7 +175,7 @@ const depots_data = [
         name: 'Надежда',
         inv_number_ranges: [
             ['trolley', [2000, 2999]],
-            ['bus', [5039, 5064]]
+            ['bus', [5038, 5064]]
         ],
         geometry: [
             [
@@ -361,7 +361,7 @@ function is_inv_number_in_range(inv_number, range) {
     }
 }
 
-function get_vehicle_depot(inv_number, type) {
+export function get_vehicle_depot(type, inv_number) {
     const elligible_depots = depots_data.filter(depot => 
         typeof depot.type === 'string' && depot.type === type || 
         typeof depot.type === 'object' && depot.type.includes(type));
@@ -383,7 +383,7 @@ function get_vehicle_depot(inv_number, type) {
     return null;
 }
 
-const depots_by_name = depots_data.reduce((obj, depot) => {
+export const depots_by_name = depots_data.reduce((obj, depot) => {
     obj[depot.id] = depot;
     return obj;
 }, {});

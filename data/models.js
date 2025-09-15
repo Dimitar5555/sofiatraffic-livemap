@@ -1,6 +1,7 @@
 const models = {
     tram: [
         {
+            id: 'pesa_swing',
             name: 'PESA Swing',
             gauge: 1009,
             inv_number_ranges: [
@@ -8,6 +9,7 @@ const models = {
             ]
         },
         {
+            id: 'tatra_t6a2_sf',
             name: 'Tatra T6A2-SF',
             gauge: 1009,
             inv_number_ranges: [
@@ -15,6 +17,7 @@ const models = {
             ]
         },
         {
+            id: 'tatra_t6a2b',
             name: 'Tatra T6A2B',
             gauge: 1009,
             inv_number_ranges: [
@@ -23,6 +26,7 @@ const models = {
             ]
         },
         {
+            id: 'inekon',
             name: 'T8M-700 IT (Inekon)',
             gauge: 1009,
             inv_number_ranges: [
@@ -30,6 +34,7 @@ const models = {
             ]
         },
         {
+            id: 'schindler',
             name: 'Schindler Waggon Be 4/6',
             gauge: 1009,
             inv_number_ranges: [
@@ -37,6 +42,7 @@ const models = {
             ]
         },
         {
+            id: 't8m_500_f',
             name: "T8M-500 F",
             gauge: 1009,
             inv_number_ranges: [
@@ -44,6 +50,7 @@ const models = {
             ]
         },
         {
+            id: 't8m_900_f',
             name: "T8M-900 F",
             gauge: 1009,
             inv_number_ranges: [
@@ -51,6 +58,7 @@ const models = {
             ]
         },
         {
+            id: 't6m_700_f',
             name: "T6M-700 F",
             gauge: 1009,
             inv_number_ranges: [
@@ -58,6 +66,8 @@ const models = {
             ]
         },
         {
+
+            id: 'tatra_t6b5b',
             name: "Tatra T6B5B",
             gauge: 1435,
             inv_number_ranges: [
@@ -65,6 +75,7 @@ const models = {
             ]
         },
         {
+            id: 'tatra_t6a5',
             name: "Tatra T6A5",
             gauge: 1435,
             inv_number_ranges: [
@@ -72,6 +83,7 @@ const models = {
             ]
         },
         {
+            id: 'duewag_gt8',
             name: "Duewag GT8",
             gauge: 1435,
             inv_number_ranges: [
@@ -82,6 +94,7 @@ const models = {
     ],
     trolley: [
         {
+            id: 'ikarus_facelift',
             name: "Ikarus 280.92F",
             inv_number_ranges: [
                 2108,
@@ -89,6 +102,7 @@ const models = {
             ]
         },
         {
+            id: 'ikarus',
             name: "Ikarus 280.92",
             inv_number_ranges: [
                 2123,
@@ -99,6 +113,7 @@ const models = {
             ]
         },
         {
+            id: 'skoda_26tr',
             name: "Skoda 26Tr Solaris",
             length: 12,
             inv_number_ranges: [
@@ -106,6 +121,7 @@ const models = {
             ]
         },
         {
+            id: 'skoda_27tr_3',
             name: "Skoda 27Tr Solaris III",
             length: 18,
             inv_number_ranges: [
@@ -114,6 +130,7 @@ const models = {
             ]
         },
         {
+            id: 'skoda_27tr_4',
             name: "Skoda 27Tr Solaris IV",
             length: 18,
             inv_number_ranges: [
@@ -123,6 +140,7 @@ const models = {
     ],
     bus: [
         {
+            id: 'man_lions_city_g',
             name: 'MAN Lion\'s City',
             length: 18,
             fuel: 'CNG',
@@ -135,6 +153,7 @@ const models = {
             ]
         },
         {
+            id: 'yutong_diesel',
             name: 'Yutong ZK6126HGA',
             inv_number_ranges: [
                 [1201, 1299],
@@ -143,12 +162,14 @@ const models = {
             ]
         },
         {
+            id: 'yutong_cng',
             name: 'Yutong ZK6126HGA CNG',
             inv_number_ranges: [
                 [3650, 3699]
             ]
         },
         {
+            id: 'bmc_procity',
             name: 'BMC Procity CNG',
             inv_number_ranges: [
                 [1401, 1499],
@@ -158,6 +179,7 @@ const models = {
             ]
         },
         {
+            id: 'mb_conecto_g',
             name: 'Mercedes-Benz O345 Conecto G',
             inv_number_ranges: [
                 [1100, 1138],
@@ -166,12 +188,14 @@ const models = {
             ]
         },
         {
+            id: 'mb_conecto_lf',
             name: 'Mercedes-Benz Conecto LF',
             inv_number_ranges: [
                 [1801, 1899]
             ]
         },
         {
+            id: 'karsan_ejest',
             name: 'Karsan e-JEST',
             inv_number_ranges: [
                 [1010, 1099],
@@ -179,6 +203,7 @@ const models = {
             ]
         },
         {
+            id: 'bmc_belde',
             name: 'BMC Belde 220-SLF',
             inv_number_ranges: [
                 [2720, 2799],
@@ -186,6 +211,7 @@ const models = {
             ]
         },
         {
+            id: 'higer_12m',
             name: 'Higer KLQ6832GEV',
             inv_number_ranges: [
                 [1701, 1703],
@@ -193,6 +219,7 @@ const models = {
             ]
         },
         {
+            id: 'higer_9m',
             name: 'Higer KLQ6832GEV3',
             length: 9,
             inv_number_ranges: [
@@ -200,6 +227,7 @@ const models = {
             ]
         },
         {
+            id: 'yutong_electric',
             name: 'Yutong E12LF',
             inv_number_ranges: [
                 [2800, 2899],
@@ -207,42 +235,51 @@ const models = {
             ]
         },
         {
+            id: 'mb_conecto_s',
             name: 'Mercedes-Benz O345 Conecto S',
             inv_number_ranges: [
                 [1901, 1999]
             ]
         },
         {
+            id: 'man_sg262',
             name: 'MAN SG262',
             inv_number_ranges: [
                 [2135, 2160]
             ]
         },
         {
+            id: 'mb_intouro',
             name: 'Mercedes-Benz Intouro',
             inv_number_ranges: [
                 [1301, 1399]
             ]
         },
         {
+            id: 'man_dd',
             name: 'MAN A39 Lion\'s City DD',
+            double_decker: true,
             inv_number_ranges: [
                 [2602, 2605]
             ]
         },
         {
+            id: 'mb_o345g',
             name: 'Mercedes-Benz O345 G',
             inv_number_ranges: [
                 3592
             ]
         },
         {
+            id: 'neoplan_dd',
             name: 'Neoplan Centroliner',
+            double_decker: true,
             inv_number_ranges: [
                 2601
             ]
         },
         {
+            id: 'man_lions_city_12m',
             name: 'MAN Lion\'s City',
             length: 12,
             fuel: 'CNG',
@@ -254,7 +291,7 @@ const models = {
     ]
 };
 
-function get_vehicle_model(inv_number, type) {
+export function get_vehicle_model(type, inv_number) {
     if(typeof inv_number === 'string') {
         inv_number = parseInt(inv_number.split('+')[0]);
     }
@@ -276,3 +313,9 @@ function get_vehicle_model(inv_number, type) {
     }
     return { name: "Неизвестен модел" };
 }
+
+export const models_by_type_and_models = {
+    tram: models.tram.reduce((obj, item) => (obj[item.id] = item, obj), {}),
+    trolley: models.trolley.reduce((obj, item) => (obj[item.id] = item, obj), {}),
+    bus: models.bus.reduce((obj, item) => (obj[item.id] = item, obj), {})
+};
