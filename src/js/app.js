@@ -198,7 +198,7 @@ function generate_route_table(type, route_ref) {
     return tbody;
 }
 
-function populate_route_table(relevant_vehicles, tbody, type) {
+function populate_route_table(relevant_vehicles, tbody) {
     relevant_vehicles.sort((a, b) => proper_inv_number_for_sorting(a.inv_number)-proper_inv_number_for_sorting(b.inv_number));
     const tr = document.createElement('tr');
     const td = document.createElement('td');
@@ -251,7 +251,7 @@ function update_route_table(type, route_ref) {
         }
         let new_tbody = old_tbody.cloneNode();
         new_tbody.appendChild(old_tbody.children[0]);
-        populate_route_table(relevant_vehicles, new_tbody, type)
+        populate_route_table(relevant_vehicles, new_tbody)
         old_tbody.replaceWith(new_tbody);
     }
     catch (err){
