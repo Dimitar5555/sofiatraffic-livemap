@@ -3,10 +3,14 @@ import 'leaflet';
 import 'leaflet-rotatedmarker';
 import { LocateControl } from 'leaflet.locatecontrol';
 
+import { depots_data, get_vehicle_depot } from '/data/depots';
+import { get_vehicle_model } from '/data/models';
+
 import { preprocess_vehicle, handle_tram_compositions, add_to_cache } from './cache';
 import { update_map_markers } from './map';
 import { WEBSOCKET_URL } from './config';
 import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, register_vehicle_view } from './utils';
+import { is_vehicle_expected_on_line } from '/data/expected_models';
 
 var websocket_connection = null;
 var cache = [];
@@ -209,9 +213,20 @@ function populate_route_table(relevant_vehicles, tbody) {
             zoom_to_vehicle(vehicle.type, vehicle.inv_number);
         });
         const vehicle_inv_number = typeof vehicle.inv_number == 'string' ? vehicle.inv_number.split('+')[0] : vehicle.inv_number;
-        const depot = get_vehicle_depot(vehicle_inv_number, vehicle.type);
+        const depot = get_vehicle_depot(vehicle.type, vehicle_inv_number);
         btn.setAttribute('data-depot-id', depot.id);
         btn.setAttribute('data-inv-number', vehicle.inv_number);
+        if(vehicle.is_unexpected) {
+            btn.classList.add('btn-warning');
+            btn.classList.remove('btn-outline-dark');
+            btn.setAttribute('data-is-unexpected', 'true');
+            tbody.setAttribute('data-unexpected', 'true');
+        }
+        const model = get_vehicle_model(vehicle.type, vehicle_inv_number);
+        if(model.double_decker) {
+            btn.dataset.doubleDecker = 'true';
+            tbody.setAttribute('data-double-decker', 'true');
+        }
         btn.classList.add('text-center', 'align-middle')
         btn.innerText = proper_inv_number(vehicle.inv_number);
         td.appendChild(btn);
@@ -249,7 +264,10 @@ function update_route_table(type, route_ref) {
         else {
             relevant_vehicles = cache.filter(vehicle => vehicle.type == type && !vehicle.route_ref && !vehicle.hidden);
         }
-        let new_tbody = old_tbody.cloneNode();
+        for(const v of relevant_vehicles) {
+            v.is_unexpected = !is_vehicle_expected_on_line(type, route_ref, v.inv_number);
+        }
+        const new_tbody = old_tbody.cloneNode();
         new_tbody.appendChild(old_tbody.children[0]);
         populate_route_table(relevant_vehicles, new_tbody)
         old_tbody.replaceWith(new_tbody);

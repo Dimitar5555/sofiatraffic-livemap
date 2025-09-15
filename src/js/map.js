@@ -1,5 +1,7 @@
+import { determine_route_colour } from 'sofiatraffic-library';
 import { BG_TYPES, MIN_ACTIVE_SPEED } from './config';
 import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
+import { get_vehicle_model } from '/data/models';
 
 function generate_vehicle_popup_text({ inv_number, type, route_ref, geo: { speed } }) {
     const correct_inv_number = proper_inv_number(inv_number);
@@ -11,7 +13,7 @@ function generate_vehicle_popup_text({ inv_number, type, route_ref, geo: { speed
     else {
         text = `${BG_TYPES[type]} ${route_ref}`;
     }
-    const model = get_vehicle_model(inv_number, type);
+    const model = get_vehicle_model(type, inv_number);
     const model_text = `${model?.name} ${model?.fuel?model.fuel:''} ${model?.length?'('+model.length+' m)':''}`;
     const to_return = '<div class="text-center">'
     + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`

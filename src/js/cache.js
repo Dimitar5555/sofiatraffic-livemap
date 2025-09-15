@@ -1,5 +1,7 @@
 import { booleanPointInPolygon } from '@turf/boolean-point-in-polygon';
 
+import { depots_data } from '/data/depots';
+
 import { MIN_ACTIVE_SPEED } from './config';
 import { caclulate_distance, calculate_bearing, calculate_speed } from './utils';
 

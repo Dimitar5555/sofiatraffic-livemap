@@ -32,6 +32,14 @@
             </div>
             <select id="vehicle_depot" onchange="apply_filters()" class="form-control form-control-sm mb-2"></select>
             <input id="vehicle_inv_number" onkeyup="apply_filters()" placeholder="Инвентарен номер" class="form-control form-control-sm"></input>
+            <div>
+                <input id="vehicle_double_decker" type="checkbox" onchange="apply_filters()" class="form-check-input"></input>
+                <label for="vehicle_double_decker" class="form-check-label ms-2">Само двуетажни</label>
+            </div>
+            <div>
+                <input id="vehicle_unexpected" type="checkbox" onchange="apply_filters()" class="form-check-input"></input>
+                <label for="vehicle_unexpected" class="form-check-label ms-2">Необичайни ПС</label>
+            </div>
         </div>
         <div class="table-container">
             <table id="vehicles_table" class="table table-sm table-bordered overflow-auto"></table>
