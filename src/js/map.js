@@ -30,7 +30,6 @@ function generate_tooltip_text({ inv_number, type }) {
 
 function create_icon({ type, geo: { speed, bearing }, route_ref, reduce_marker }) {
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
-    const bearing = vehicle.geo.bearing;
     
     const width = !reduce_marker?29:29/3; // initial 25px
     const half_width = width/2;
