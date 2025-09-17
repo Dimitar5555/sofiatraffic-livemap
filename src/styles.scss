@@ -5,12 +5,6 @@
 
 @import "/node_modules/sofiatraffic-library/common.scss";
 
-:root {
-    --marker-outer-size: 25px;
-    --marker-inner-size: 9px;
-    --top-right-distance-inner-dot: calc((var(--marker-outer-size) - var(--marker-inner-size)) / 2);
-}
-
 #left_panel {
     z-index: 1100;
     background-color: #fff;
@@ -50,11 +44,11 @@
 }
 
 .svg_small {
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .svg_large {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .leaflet-popup-content {
