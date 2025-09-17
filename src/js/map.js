@@ -30,7 +30,8 @@ function generate_tooltip_text({ inv_number, type }) {
 
 function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
-
+    const bearing = vehicle.geo.bearing;
+    
     const width = !reduce_marker?29:29/3; // initial 25px
     const half_width = width/2;
     const height = !reduce_marker?45:45; // initial 41px
@@ -42,14 +43,12 @@ function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
 
     const class_name = route_ref != null && route_ref.toString().length <= 2 ? 'large' : 'small';
 
-    const open_svg = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
-    const outer_circle = `<circle stroke="black" stroke-width="0.95px" cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
+    const open_svg = `<svg width="${width+1}" height="${height+1}" viewBox="-0.5 -0.5 ${width+0.5} ${height+0.5}" xmlns="http://www.w3.org/2000/svg">`;
+    const circle = `<circle stroke="black" stroke-width="0.95px" cx="${half_width}" cy="${half_width}" r="${half_width}"/>`;
     const triangle = `<polygon points="${triangle_left_point} ${triangle_right_point} ${triangle_acute_point}"/>`;
     const triangle_outline = `<g stroke="black" stroke-width="0.95px"><line x1="${triangle_left_point.split(',')[0]}" y1="${triangle_left_point.split(',')[1]}" x2="${triangle_acute_point.split(',')[0]}" y2="${triangle_acute_point.split(',')[1]}"/><line x1="${triangle_right_point.split(',')[0]}" y1="${triangle_right_point.split(',')[1]}" x2="${triangle_acute_point.split(',')[0]}" y2="${triangle_acute_point.split(',')[1]}"/></g>`;
-    const group_open = '<g>';
-    const group_close = '</g>';
 
-    const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform-origin="${half_width} ${half_width}">${route_ref?route_ref:''}</text>`;
+    const text = `<text x="${half_width}px" y="${half_width}px" dominant-baseline="middle" text-anchor="middle" class="svg_text svg_${class_name}" transform-origin="${half_width} ${half_width}" transform="rotate(${state=='active' ? -bearing + 360 : 0})">${route_ref ?? ''}</text>`;
     const close_svg = '</svg>';
     
     const route_type = typeof route_ref === 'string' && route_ref.startsWith('N') ? 'night' : type;
@@ -60,11 +59,11 @@ function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
         className: `vehicle-${route_type}`
     }
     if(state == 'active') {
-        options.html = `${open_svg}${outer_circle}${group_open}${triangle}${triangle_outline}${group_close}${text}${close_svg}`;
+        options.html = `${open_svg}${circle}${triangle}${triangle_outline}${text}${close_svg}`;
         options.rotationOrigin = options.iconAnchor.map(a => a+' px').join(' ');
     }
     else {
-        options.html = `${open_svg}${outer_circle}${text}${close_svg}`;
+        options.html = `${open_svg}${circle}${text}${close_svg}`;
     }
     const icon = L.divIcon(options);
     return icon;
