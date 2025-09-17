@@ -18,7 +18,7 @@ function generate_vehicle_popup_text({ inv_number, type, route_ref, geo: { speed
     const to_return = '<div class="text-center">'
     + `${correct_inv_number} на <span class="${classes}">${text}</span><br>`
     + `${model_text}<br>`
-    + `<i class="bi bi-speedometer"></i> ${speed?speed+' km/h':'Изчислява се...'}`
+    + `<i class="bi bi-speedometer"></i> ${speed >= 0 ? speed+' km/h' : 'Изчислява се...'}`
     + '</div>';
 
     return to_return;
