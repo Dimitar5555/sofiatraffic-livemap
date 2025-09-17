@@ -28,7 +28,7 @@ function generate_tooltip_text({ inv_number, type }) {
     return `${BG_TYPES[type]} ${proper_inv_number(inv_number)}`;
 }
 
-function create_icon({type, geo:{speed}, route_ref, reduce_marker}) {
+function create_icon({ type, geo: { speed, bearing }, route_ref, reduce_marker }) {
     const state = speed > MIN_ACTIVE_SPEED ? 'active' : 'passive';
     const bearing = vehicle.geo.bearing;
     
