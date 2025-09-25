@@ -73,6 +73,7 @@ export function handle_tram_compositions(cache, data_source) {
                 'next_stop',
                 'destination_stop',
                 'scheduled_time',
+                'timestamp'
             ];
             for(const prop of copy_properties) {
                 composition_entry[prop] = first_wagon_entry[prop];
