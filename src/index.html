@@ -61,47 +61,50 @@
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
             &lt;
         </button>
-        <h3>Настройки</h3>
-        <div class="form-check form-switch my-1">
-            Позиции на превозни средства:
-            <br>
-            <input type="radio" name="positions_data_source" id="sumc_gtfs" value="gtfs">
-            <label for="sumc_gtfs" class="form-check-label">ЦГМ (GTFS)</label>
-            <br>
-            <input type="radio" name="positions_data_source" id="sumc_avl" value="avl">
-            <label for="sumc_avl" class="form-check-label">ЦГМ (AVL)</label>
+        <div class="overflow-y-auto">
+            
+            <h3>Настройки</h3>
+            <div class="form-check form-switch my-1">
+                Позиции на превозни средства:
+                <br>
+                <input type="radio" name="positions_data_source" id="sumc_gtfs" value="gtfs">
+                <label for="sumc_gtfs" class="form-check-label">ЦГМ (GTFS)</label>
+                <br>
+                <input type="radio" name="positions_data_source" id="sumc_avl" value="avl">
+                <label for="sumc_avl" class="form-check-label">ЦГМ (AVL)</label>
+            </div>
+            <h5>GTFS данни</h5>
+            <ul>
+                <li><strong>Включват:</strong>
+                    <ul>
+                        <li>Отклонение в разписанието</li>
+                    <li>Реална скорост</li>
+                </ul>
+                </li>
+                <li><strong>Не включват:</strong>
+                <ul>
+                    <li>Превозни средства които не са линия</li>
+                    <li>Вторите вагони на трамвайните състави (т.е. възможно е да се показват неактуални състави)</li>
+                </ul>
+                </li>
+            </ul>
+            <h5>AVL данни</h5>
+            <ul>
+                <li><strong>Включват:</strong>
+                    <ul>
+                        <li>Превозни средства които не са на линия</li>
+                        <li>Изчислена скорост, която може да не е напълно коректна</li>
+                        <li>Вторите вагони на трамвайните състави (т.е. по-малко вероятно е да се показват вече разделени състави</li>
+                    </ul>
+                </li>
+                <li><strong>Не включват:</strong>
+                    <ul>
+                        <li>Отклонение в разписанието</li>
+                        <li>Реална скорост</li>
+                    </ul>
+                </li>
+            </ul>
         </div>
-        <h5>GTFS данни</h5>
-        <ul>
-            <li><strong>Включват:</strong>
-            <ul>
-                <li>Отклонение в разписанието</li>
-                <li>Реална скорост</li>
-            </ul>
-            </li>
-            <li><strong>Не включват:</strong>
-            <ul>
-                <li>Превозни средства които не са линия</li>
-                <li>Вторите вагони на трамвайните състави (т.е. възможно е да се показват неактуални състави)</li>
-            </ul>
-            </li>
-        </ul>
-        <h5>AVL данни</h5>
-        <ul>
-            <li><strong>Включват:</strong>
-            <ul>
-                <li>Превозни средства които не са на линия</li>
-                <li>Изчислена скорост, която може да не е напълно коректна</li>
-                <li>Вторите вагони на трамвайните състави (т.е. по-малко вероятно е да се показват вече разделени състави</li>
-            </ul>
-            </li>
-            <li><strong>Не включват:</strong>
-            <ul>
-                <li>Отклонение в разписанието</li>
-                <li>Реална скорост</li>
-            </ul>
-            </li>
-        </ul>       
     </div>
     <div id="info-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2 rounded-top-3">
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
