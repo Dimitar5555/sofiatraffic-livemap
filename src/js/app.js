@@ -70,7 +70,7 @@ var map = null;
 function init_map() {
     map = L.map('map', {
         center: [42.69671, 23.32129],
-        zoom: 13,
+        zoom: 15,
         zoomControl: false
         
     });
