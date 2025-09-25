@@ -62,48 +62,61 @@
             &lt;
         </button>
         <div class="overflow-y-auto">
-            
             <h3>Настройки</h3>
-            <div class="form-check form-switch my-1">
-                Позиции на превозни средства:
-                <br>
+            Позиции на превозни средства:
+            <div class="form-check form-switch ps-2 mb-1">
                 <input type="radio" name="positions_data_source" id="sumc_gtfs" value="gtfs">
                 <label for="sumc_gtfs" class="form-check-label">ЦГМ (GTFS)</label>
                 <br>
                 <input type="radio" name="positions_data_source" id="sumc_avl" value="avl">
                 <label for="sumc_avl" class="form-check-label">ЦГМ (AVL)</label>
             </div>
-            <h5>GTFS данни</h5>
-            <ul>
-                <li><strong>Включват:</strong>
-                    <ul>
-                        <li>Отклонение в разписанието</li>
-                    <li>Реална скорост</li>
-                </ul>
-                </li>
-                <li><strong>Не включват:</strong>
-                <ul>
-                    <li>Превозни средства които не са линия</li>
-                    <li>Вторите вагони на трамвайните състави (т.е. възможно е да се показват неактуални състави)</li>
-                </ul>
-                </li>
-            </ul>
-            <h5>AVL данни</h5>
-            <ul>
-                <li><strong>Включват:</strong>
-                    <ul>
-                        <li>Превозни средства които не са на линия</li>
-                        <li>Изчислена скорост, която може да не е напълно коректна</li>
-                        <li>Вторите вагони на трамвайните състави (т.е. по-малко вероятно е да се показват вече разделени състави</li>
-                    </ul>
-                </li>
-                <li><strong>Не включват:</strong>
-                    <ul>
-                        <li>Отклонение в разписанието</li>
-                        <li>Реална скорост</li>
-                    </ul>
-                </li>
-            </ul>
+
+
+            <div class="accordion accordion-flush" id="settings_data_sources">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            GTFS данни
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#settings_data_sources">
+                        <div class="accordion-body">
+                            <strong>Включват:</strong>
+                            <ul>
+                                <li>Отклонение в разписанието</li>
+                                <li>Данни за коли, направление, натовареност и реална скорост</li>
+                            </ul>
+                            <strong>Не включват:</strong>
+                            <ul>
+                                <li>ПС които не са линия</li>
+                                <li>Вторите вагони на трамвайните състави (възможно е да се показват неактуални състави)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            AVL данни
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#settings_data_sources">
+                        <div class="accordion-body">
+                            <strong>Включват:</strong>
+                            <ul>
+                                <li>ПС които не са линия</li>
+                                <li>Изчислена скорост, която може да не е напълно коректна</li>
+                            </ul>
+                            <strong>Не включват:</strong>
+                            <ul>
+                                <li>Отклонение в разписанието</li>
+                                <li>Реална скорост</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="info-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2 rounded-top-3">
