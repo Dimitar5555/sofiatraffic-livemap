@@ -2,6 +2,7 @@ import { polygon } from 'turf';
 import 'leaflet';
 import 'leaflet-rotatedmarker';
 import { LocateControl } from 'leaflet.locatecontrol';
+import 'bootstrap/js/dist/collapse';
 
 import { depots_data, get_vehicle_depot } from '/data/depots';
 import { get_vehicle_model } from '/data/models';
