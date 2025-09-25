@@ -193,10 +193,19 @@ function display_stop_times(stop_routes) {
                 }
             }
             for(let i = route.times.length; i < 3; i++) {
-                const td = document.createElement('td');
-                td.textContent = '-';
-                td.setAttribute('colspan', '2');
-                row.appendChild(td);
+                {
+                    const td = document.createElement('td');
+                    td.textContent = '-';
+                    td.setAttribute('colspan', '2');
+                    td.classList.add('d-none', 'd-md-table-cell');
+                    row.appendChild(td);
+                }
+                {
+                    const td = document.createElement('td');
+                    td.textContent = '-';
+                    td.classList.add('d-table-cell', 'd-md-none');
+                    row.appendChild(td);
+                }
             }
         }
         tbody.appendChild(row);
