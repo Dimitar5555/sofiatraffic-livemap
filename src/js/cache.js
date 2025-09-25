@@ -102,7 +102,7 @@ export function add_to_cache(vehicle, tables_to_update, cache) {
         tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
     }
     else {
-        tables_to_update.add(`${vehicle.type}/outOfService`);
+        tables_to_update.add(`${vehicle.type}/null`);
     }
     
     if(!cache_entry) {

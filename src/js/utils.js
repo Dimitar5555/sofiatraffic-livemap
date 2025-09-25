@@ -83,8 +83,11 @@ export function get_route_classes(type, route_ref) {
 }
 
 export function set_route_classes(el, type, route_ref) {
+    if(route_ref === 'null') {
+        route_ref = null;
+    }
     el.classList.add(...get_route_classes(type, route_ref), 'text-center');
-    el.innerHTML = `${BG_TYPES_HTML[route_ref.startsWith('N') ? 'night' : type]} ${route_ref}`;
+    el.innerHTML = `${BG_TYPES_HTML[route_ref && route_ref.startsWith('N') ? 'night' : type]} ${route_ref ?? 'Няма маршрут'}`;
 }
 
 export function register_vehicle_view(type, inv_number, is_marker=false) {

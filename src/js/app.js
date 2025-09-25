@@ -40,7 +40,7 @@ function init_websocket(attempts=1) {
         const already_processed = new Set();
         for(const vehicle of data) {
             if(!vehicle.route_ref && vehicle.cgm_route_id) {
-                vehicle.route_ref = routes.find(r => r.cgm_id == vehicle.cgm_route_id)?.route_ref;
+                vehicle.route_ref = routes.find(r => r.cgm_id == vehicle.cgm_route_id)?.route_ref || null;
             }
             if(!vehicle.type && vehicle.cgm_route_id) {
                 vehicle.type = routes.find(r => r.cgm_id == vehicle.cgm_route_id)?.type;
@@ -161,7 +161,7 @@ function init_routes_tables() {
         routes = r.filter(route => route.type != 'metro');
         for(const type of ['bus', 'trolley', 'tram']) {
             const last_index = routes.findLastIndex(route => route.type == type);
-            routes.splice(last_index+1, 0, {type: type, route_ref: 'outOfService'});
+            routes.splice(last_index+1, 0, {type: type, route_ref: null, cgm_id: null});
         }
         const table = document.querySelector('table#vehicles_table');
         for(const route of routes) {
@@ -258,6 +258,7 @@ window.onload = async () => {
 
 function generate_route_table(type, route_ref) {
     const tbody = document.createElement('tbody');
+    route_ref = route_ref ?? 'null';
     tbody.setAttribute('id', `${type}_${route_ref}`);
     tbody.setAttribute('data-type', type);
     {
@@ -329,14 +330,14 @@ window.zoom_to_vehicle = zoom_to_vehicle;
 function update_route_tables(route_tables) {
     for(const table of route_tables) {
         let [type, route_ref] = table.split('/');
-        if(route_ref === 'undefined') {
-            route_ref = 'outOfService';
+        if(route_ref === 'null' || !route_ref) {
+            route_ref = null;
         }
         
         const old_tbody = document.querySelector(`#${type}_${route_ref}`);
         try {
-            const cgm_route_id = routes.find(route => route.type == type && route.route_ref == route_ref).cgm_id;
-            const relevant_vehicles = cache.filter(vehicle => vehicle.cgm_route_id == cgm_route_id && vehicle.route_ref && vehicle.hidden !== true);
+            const cgm_route_id = routes.find(route => route.type === type && route.route_ref === route_ref).cgm_id;
+            const relevant_vehicles = cache.filter(vehicle => vehicle.type === type && vehicle.cgm_route_id === cgm_route_id && vehicle.hidden !== true);
             for(const v of relevant_vehicles) {
                 v.is_unexpected = !is_vehicle_expected_on_line(type, route_ref, v.inv_number);
             }
@@ -347,7 +348,7 @@ function update_route_tables(route_tables) {
         }
         catch (err){
             console.error(err)
-            console.log(old_tbody, route_ref,`#${type}_${route_ref}`);
+            console.log(type, route_ref,`#${type}_${route_ref}`, table);
         }
     }
 }
@@ -365,7 +366,7 @@ function hide_inactive_vehicles() {
             vehicle.marker = null;
         }
         vehicle.hidden = true;
-        update_tables.add(`${vehicle.type}/${vehicle.route_ref}`);
+        update_tables.add(`${vehicle.type}/${vehicle.route_ref ?? 'null'}`);
     });
     update_route_tables(update_tables);
 }

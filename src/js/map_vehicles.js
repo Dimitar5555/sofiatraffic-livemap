@@ -76,6 +76,9 @@ export function show_markers_in_view(map, vehicles_layer, cache) {
 }
 
 function generate_tooltip_text({ inv_number, type, car, route_ref }) {
+    if(route_ref === 'null') {
+        route_ref = null;
+    }
     const classes = get_route_classes(type, route_ref).join(' ');
     return `${proper_inv_number(inv_number)} <span class="${classes}">${BG_TYPES_HTML[route_ref && route_ref.startsWith('N') ? 'night' : type]} ${route_ref ?? 'Няма маршрут'}</span>${car ? ' / ' + car : ''}`;
 }
