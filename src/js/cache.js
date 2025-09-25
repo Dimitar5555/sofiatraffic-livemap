@@ -21,7 +21,7 @@ export function handle_tram_compositions(cache, data_source) {
         const first_wagon_entry = cache.find(entry => entry.inv_number == first_wagon && entry.type == 'tram');
         const second_wagon_entry = cache.find(entry => entry.inv_number == second_wagon && entry.type == 'tram');
 
-        const composition_inv_number = `${first_wagon}/${second_wagon % 100}`;
+        const composition_inv_number = `${first_wagon}/${(second_wagon % 100).toString().padStart(2, '0')}`;
         const composition_entry = cache.find(entry => entry.inv_number == composition_inv_number);
 
         if(!first_wagon_entry || !second_wagon_entry && data_source == 'avl') {
