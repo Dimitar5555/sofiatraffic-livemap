@@ -1186,7 +1186,7 @@ const expected_models_per_line = [
 
 export function is_vehicle_expected_on_line(type, route_ref, inv_number) {
     if(typeof inv_number === 'string') {
-        inv_number = parseInt(inv_number.split('+')[0]);
+        inv_number = parseInt(inv_number.split('/')[0]);
     }
     const line = expected_models_per_line.find(line => 
         line.type === type

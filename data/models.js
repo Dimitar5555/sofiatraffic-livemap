@@ -293,7 +293,7 @@ const models = {
 
 export function get_vehicle_model(type, inv_number) {
     if(typeof inv_number === 'string') {
-        inv_number = parseInt(inv_number.split('+')[0]);
+        inv_number = parseInt(inv_number.split('/')[0]);
     }
 
     for (const model of models[type]) {

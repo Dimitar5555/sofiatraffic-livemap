@@ -32,7 +32,7 @@ function filter_by_all_params(type, depot_id, inv_number, is_double_decker, is_u
             const is_inv_number_ok = inv_number == 0 
             || inv_number == tr.dataset.invNumber 
             || tr.dataset.invNumber.includes(inv_number)
-            || tr.dataset.invNumber.includes('+') && tr.dataset.invNumber.includes(inv_number);
+            || tr.dataset.invNumber.includes('/') && tr.dataset.invNumber.includes(inv_number);
             const is_double_decker_ok = !is_double_decker || tr.dataset.doubleDecker;
             const is_unexpected_ok = !is_unexpected || tr.dataset.isUnexpected == 'true';
             
