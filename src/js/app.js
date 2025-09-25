@@ -77,32 +77,77 @@ function init_map() {
     map.invalidateSize();
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
 
-    L.Control.OpenLeftPanel = L.Control.extend({
+    L.Control.OpenInfoPanel = L.Control.extend({
         onAdd: function() {
             const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
             
             const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
             
-            const span = L.DomUtil.create('i', 'fw-bolder fs-3');
-            span.innerText = '>';
-            
-            a.appendChild(span);
+            const i = L.DomUtil.create('i', 'bi bi-info-lg fs-3');
+
+            a.appendChild(i);
             div.appendChild(a);
 
             div.onclick = function() {
-                const left_panel = document.querySelector('#left_panel');
-                if(left_panel.classList.contains('d-none')) {
-                    left_panel.classList.remove('d-none');
-                }
+                const info_panel = document.querySelector('#info-panel');
+                info_panel.classList.remove('d-none');
             }
             
             return div;
         }
     });
-    L.control.openLeftPanel = function(opts) {
-        return new L.Control.OpenLeftPanel(opts);
+    L.control.openInfoPanel = function(opts) {
+        return new L.Control.OpenInfoPanel(opts);
+    }
+
+    L.Control.OpenVehiclesPanel = L.Control.extend({
+        onAdd: function() {
+            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+            
+            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+            
+            const i = L.DomUtil.create('i', 'bi bi-bus-front-fill fs-4');
+            
+            a.appendChild(i);
+            div.appendChild(a);
+
+            div.onclick = function() {
+                const vehicles_panel = document.querySelector('#vehicles-panel');
+                vehicles_panel.classList.remove('d-none');
+            }
+            
+            return div;
+        }
+    });
+
+    L.Control.OpenSettingsPanel = L.Control.extend({
+        onAdd: function() {
+            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+            
+            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+            
+            const i = L.DomUtil.create('i', 'bi bi-gear-fill fs-4');
+
+            a.appendChild(i);
+            div.appendChild(a);
+
+            div.onclick = function() {
+                const settings_panel = document.querySelector('#settings-panel');
+                settings_panel.classList.remove('d-none');
+            }
+            
+            return div;
+        }
+    });
+    L.control.openSettingsPanel = function(opts) {
+        return new L.Control.OpenSettingsPanel(opts);
+    }
+    L.control.openVehiclesPanel = function(opts) {
+        return new L.Control.OpenVehiclesPanel(opts);
     };
-    L.control.openLeftPanel({ position: 'topleft' }).addTo(map);
+    L.control.openVehiclesPanel({ position: 'topleft' }).addTo(map);
+    L.control.openInfoPanel({ position: 'topleft' }).addTo(map);
+    L.control.openSettingsPanel({ position: 'topleft' }).addTo(map);
     L.control.zoom({
         position: 'topright'
     }).addTo(map);

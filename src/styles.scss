@@ -1,7 +1,16 @@
-#left_panel {
+.panel {
     z-index: 1100;
     background-color: #fff;
     max-width: 250px;;
+}
+
+.panel-bottom {
+    bottom: 0;
+    left: 50%;
+    max-height: 45%;
+    overflow-y: auto;
+    max-width: 475px;
+    transform: translateX(-50%);
 }
 
 .vehicle-tram > svg {
@@ -20,12 +29,12 @@
     fill: var(--night-bus-color);
 }
 
-.table-container {
-    overflow-y: auto;
+.vehicle-inactive {
+    opacity: 0.75;
 }
 
-.lh-100 {
-    line-height: 100%;
+.table-container {
+    overflow-y: auto;
 }
 
 .svg_text {
@@ -80,3 +89,7 @@
     background-image: url('/src/images/night.png');
 }
 
+.leaflet-div-icon {
+	background: none;
+	border: none;
+}

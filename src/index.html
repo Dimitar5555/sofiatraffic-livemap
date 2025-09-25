@@ -26,7 +26,7 @@
     <script src="js/filters.js"></script>
 </head>
 <body class="position-relative h-100">
-    <div id="left_panel" class="position-absolute h-100 d-flex flex-column d-none px-1">
+    <div id="vehicles-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
         <div class="mb-2">
             <div class="d-flex flex-row justify-content-between mb-2">
                 <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.parentElement.parentElement.classList.add('d-none')">
@@ -49,16 +49,76 @@
             <table id="vehicles_table" class="table table-sm table-bordered overflow-auto"></table>
         </div>
     </div>
-    <div id="map" class="h-100"></div>
-    
-    <!-- <footer class="footer">
-        <div class="container text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
-            Данни: ЦГМ, OpenStreetMap
+    <div id="virtual-board-panel" class="panel panel-bottom position-absolute d-flex flex-column d-none p-3 mx-2 rounded-top-4">
+        <span id="stop_name" class="fs-6"></span>
+        <i class="bi bi-x-lg position-absolute top-0 end-0 m-2 fs-5" style="cursor: pointer;" onclick="this.parentElement.classList.add('d-none')"></i>
+        <table class="table table-bordered">
+            <tbody></tbody>
+        </table>
+        <p id="last-updated" class="text-muted text-end" data-timestamp=""></p>
+    </div>
+    <div id="settings-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
+        <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
+            &lt;
+        </button>
+        <h3>Настройки</h3>
+        <div class="form-check form-switch my-1">
+            Позиции на превозни средства:
             <br>
-            <a href="https://github.com/Dimitar5555/sofiatraffic-livemap/issues" target="_blank">Обратна връзка</a>
-            |
-            <a href="https://dimitar5555.github.io/sofiatraffic-schedules/" target="_blank">Разписания</a>
+            <input type="radio" name="positions_data_source" id="sumc_gtfs" value="gtfs">
+            <label for="sumc_gtfs" class="form-check-label">ЦГМ (GTFS)</label>
+            <br>
+            <input type="radio" name="positions_data_source" id="sumc_avl" value="avl">
+            <label for="sumc_avl" class="form-check-label">ЦГМ (AVL)</label>
         </div>
-    </footer> -->
+        <h5>GTFS данни</h5>
+        <ul>
+            <li><strong>Включват:</strong>
+            <ul>
+                <li>Отклонение в разписанието</li>
+                <li>Реална скорост</li>
+            </ul>
+            </li>
+            <li><strong>Не включват:</strong>
+            <ul>
+                <li>Превозни средства които не са линия</li>
+                <li>Вторите вагони на трамвайните състави (т.е. възможно е да се показват неактуални състави)</li>
+            </ul>
+            </li>
+        </ul>
+        <h5>AVL данни</h5>
+        <ul>
+            <li><strong>Включват:</strong>
+            <ul>
+                <li>Превозни средства които не са на линия</li>
+                <li>Изчислена скорост, която може да не е напълно коректна</li>
+                <li>Вторите вагони на трамвайните състави (т.е. по-малко вероятно е да се показват вече разделени състави</li>
+            </ul>
+            </li>
+            <li><strong>Не включват:</strong>
+            <ul>
+                <li>Отклонение в разписанието</li>
+                <li>Реална скорост</li>
+            </ul>
+            </li>
+        </ul>       
+    </div>
+    <div id="info-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2 rounded-top-3">
+        <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
+            &lt;
+        </button>
+        <h3>Информация за проекта</h3>
+        <p>Позиции на превозни средства: Център за градска мобилност</p>
+        <br>
+        <p>Данни за спирки: OpenStreetMap</p>
+        <br>
+        <p>Данни за разписания: Център за градска мобилност</p>
+        <br>
+        <p>
+            <a href="https://github.com/Dimitar5555/sofiatraffic-livemap/issues" target="_blank">Обратна връзка</a> | 
+            <a href="https://dimitar5555.github.io/sofiatraffic-schedules/" target="_blank">Разписания</a>
+        </p>
+    </div>
+    <div id="map" class="h-100"></div>
 </body>
 </html>
