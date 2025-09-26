@@ -134,16 +134,11 @@ async function load_stop_times(stop_code) {
 
 function display_stop_times(stop_routes) {
     function display_hours(scheduled, actual) {
-        // const actual_hour = Number(actual.split(':')[0]);
-        // const actual_minute = Number(actual.split(':')[1]);
-
-        // scheduled = `${Math.floor(scheduled/60)`
-
-        // const scheduled_hour = Math.floor(scheduled / 60);
-        // const scheduled_minute = scheduled % 60;
-        scheduled %= 24 * 60;
+        if(typeof scheduled === 'number') {
+            scheduled %= 24 * 60;
+        }
         actual %= 24 * 60;
-        const total_diff = scheduled ? (actual - scheduled) : null;
+        const total_diff = typeof scheduled === 'number' ? actual - scheduled : null;
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
         const diff_html = `<span class="${diff_class}">${total_diff > 0 ? '+' : ''}${total_diff}</span>`;
@@ -153,7 +148,7 @@ function display_stop_times(stop_routes) {
         // }
         const minute = (actual % 60).toString().padStart(2, '0');
         const actual_formatted = `${(hour % 24).toString().padStart(2, '0')}:${minute}`;
-        return [actual_formatted, total_diff != null ? diff_html : null];
+        return [actual_formatted, total_diff === null ? null : diff_html];
     }
 
     const tbody = document.createElement('tbody');
@@ -180,9 +175,9 @@ function display_stop_times(stop_routes) {
             for(const { actual_time, scheduled_time } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                td.innerHTML = r[0] + ` <br class="d-inline d-md-none"><span class="d-inline d-md-none">${r[1]}</span>`;
+                td.innerHTML = r[0] + (r[1] ? ` <br class="d-inline d-md-none"><span class="d-inline d-md-none">${r[1]}</span>` : '');
                 row.appendChild(td);
-                if(r[1] !== null) {
+                if(!r[1]) {
                     const td2 = document.createElement('td');
                     td2.innerHTML = r[1];
                     td2.classList.add('d-none', 'd-md-table-cell');
