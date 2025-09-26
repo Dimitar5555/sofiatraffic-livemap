@@ -1,7 +1,6 @@
 import { polygon } from 'turf';
 import 'leaflet';
 import 'leaflet-rotatedmarker';
-import { LocateControl } from 'leaflet.locatecontrol';
 import 'bootstrap/js/dist/collapse';
 
 import { depots_data, get_vehicle_depot } from '/data/depots';
@@ -9,10 +8,10 @@ import { get_vehicle_model } from '/data/models';
 
 import { handle_tram_compositions, add_to_cache } from './cache';
 import { update_map_markers, show_markers_in_view } from './map_vehicles';
-import { load_stops, show_stops_in_view } from './map_stops';
 import { WEBSOCKET_URL } from './config';
 import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, register_vehicle_view } from './utils';
 import { is_vehicle_expected_on_line } from '/data/expected_models';
+import { init_map, map, vehicles_layer } from './map';
 
 var websocket_connection = null;
 export var cache = [];
@@ -65,94 +64,94 @@ function init_websocket(attempts=1) {
     }
 }
 
-export var map = null;
+// export var map = null;
 
-function init_map() {
-    map = L.map('map', {
-        center: [42.69671, 23.32129],
-        zoom: 15,
-        zoomControl: false
+// function init_map() {
+//     map = L.map('map', {
+//         center: [42.69671, 23.32129],
+//         zoom: 15,
+//         zoomControl: false
         
-    });
-    map.invalidateSize();
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+//     });
+//     map.invalidateSize();
+//     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
 
-    L.Control.OpenInfoPanel = L.Control.extend({
-        onAdd: function() {
-            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+//     L.Control.OpenInfoPanel = L.Control.extend({
+//         onAdd: function() {
+//             const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
             
-            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+//             const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
             
-            const i = L.DomUtil.create('i', 'bi bi-info-lg fs-3');
+//             const i = L.DomUtil.create('i', 'bi bi-info-lg fs-3');
 
-            a.appendChild(i);
-            div.appendChild(a);
+//             a.appendChild(i);
+//             div.appendChild(a);
 
-            div.onclick = function() {
-                const info_panel = document.querySelector('#info-panel');
-                info_panel.classList.remove('d-none');
-            }
+//             div.onclick = function() {
+//                 const info_panel = document.querySelector('#info-panel');
+//                 info_panel.classList.remove('d-none');
+//             }
             
-            return div;
-        }
-    });
-    L.control.openInfoPanel = function(opts) {
-        return new L.Control.OpenInfoPanel(opts);
-    }
+//             return div;
+//         }
+//     });
+//     L.control.openInfoPanel = function(opts) {
+//         return new L.Control.OpenInfoPanel(opts);
+//     }
 
-    L.Control.OpenVehiclesPanel = L.Control.extend({
-        onAdd: function() {
-            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+//     L.Control.OpenVehiclesPanel = L.Control.extend({
+//         onAdd: function() {
+//             const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
             
-            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+//             const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
             
-            const i = L.DomUtil.create('i', 'bi bi-bus-front-fill fs-4');
+//             const i = L.DomUtil.create('i', 'bi bi-bus-front-fill fs-4');
             
-            a.appendChild(i);
-            div.appendChild(a);
+//             a.appendChild(i);
+//             div.appendChild(a);
 
-            div.onclick = function() {
-                const vehicles_panel = document.querySelector('#vehicles-panel');
-                vehicles_panel.classList.remove('d-none');
-            }
+//             div.onclick = function() {
+//                 const vehicles_panel = document.querySelector('#vehicles-panel');
+//                 vehicles_panel.classList.remove('d-none');
+//             }
             
-            return div;
-        }
-    });
+//             return div;
+//         }
+//     });
 
-    L.Control.OpenSettingsPanel = L.Control.extend({
-        onAdd: function() {
-            const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
+//     L.Control.OpenSettingsPanel = L.Control.extend({
+//         onAdd: function() {
+//             const div = L.DomUtil.create('div', 'leaflet-control-locate leaflet-bar leaflet-control');
             
-            const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
+//             const a = L.DomUtil.create('a', 'leaflet-bar-part leaflet-bar-part-single');
             
-            const i = L.DomUtil.create('i', 'bi bi-gear-fill fs-4');
+//             const i = L.DomUtil.create('i', 'bi bi-gear-fill fs-4');
 
-            a.appendChild(i);
-            div.appendChild(a);
+//             a.appendChild(i);
+//             div.appendChild(a);
 
-            div.onclick = function() {
-                const settings_panel = document.querySelector('#settings-panel');
-                settings_panel.classList.remove('d-none');
-            }
+//             div.onclick = function() {
+//                 const settings_panel = document.querySelector('#settings-panel');
+//                 settings_panel.classList.remove('d-none');
+//             }
             
-            return div;
-        }
-    });
-    L.control.openSettingsPanel = function(opts) {
-        return new L.Control.OpenSettingsPanel(opts);
-    }
-    L.control.openVehiclesPanel = function(opts) {
-        return new L.Control.OpenVehiclesPanel(opts);
-    };
-    L.control.openVehiclesPanel({ position: 'topleft' }).addTo(map);
-    L.control.openInfoPanel({ position: 'topleft' }).addTo(map);
-    L.control.openSettingsPanel({ position: 'topleft' }).addTo(map);
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
-    new LocateControl({position: 'topright'}).addTo(map);
-}
+//             return div;
+//         }
+//     });
+//     L.control.openSettingsPanel = function(opts) {
+//         return new L.Control.OpenSettingsPanel(opts);
+//     }
+//     L.control.openVehiclesPanel = function(opts) {
+//         return new L.Control.OpenVehiclesPanel(opts);
+//     };
+//     L.control.openVehiclesPanel({ position: 'topleft' }).addTo(map);
+//     L.control.openInfoPanel({ position: 'topleft' }).addTo(map);
+//     L.control.openSettingsPanel({ position: 'topleft' }).addTo(map);
+//     L.control.zoom({
+//         position: 'topright'
+//     }).addTo(map);
+//     new LocateControl({position: 'topright'}).addTo(map);
+// }
 
 export let routes = [];
 function init_routes_tables() {
@@ -215,9 +214,6 @@ function init_depots() {
     });
 }
 
-let vehicles_layer = null;
-export let stops_layer = null;
-
 window.onload = async () => {
     await init_routes_tables();
     init_map();
@@ -225,22 +221,6 @@ window.onload = async () => {
     init_websocket();
     init_selectors();
     init_settings();
-    vehicles_layer = L.layerGroup().addTo(map);
-    stops_layer = L.layerGroup().addTo(map);
-    load_stops(stops_layer);
-    map.on('load', () => {
-        console.log('Fired map load');
-        show_stops_in_view(map, stops_layer);
-        show_markers_in_view(map, vehicles_layer, cache);
-    });
-    map.on('zoomend', () => {
-        show_stops_in_view(map, stops_layer);
-        show_markers_in_view(map, vehicles_layer, cache);
-    });
-    map.on('moveend', () => {
-        show_stops_in_view(map, stops_layer);
-        show_markers_in_view(map, vehicles_layer, cache);
-    });
 
     document.addEventListener('keyup', (e) => {
         if(e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
