@@ -142,12 +142,12 @@ function display_stop_times(stop_routes) {
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
         const diff_html = `<span class="${diff_class}">${total_diff > 0 ? '+' : ''}${total_diff}</span>`;
-        let hour = (Math.floor(actual / 60) % 24);
-        // if(hour < 4) {
-        //     hour += 24;
-        // }
+        
+        const hour = (Math.floor(actual / 60) % 24);
         const minute = (actual % 60).toString().padStart(2, '0');
+        
         const actual_formatted = `${(hour % 24).toString().padStart(2, '0')}:${minute}`;
+        
         return [actual_formatted, total_diff === null ? null : diff_html];
     }
 
