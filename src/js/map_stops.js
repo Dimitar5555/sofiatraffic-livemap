@@ -1,10 +1,9 @@
 import { routes, stops_layer } from './app';
 import { VIRTUAL_BOARD_URL } from './config';
-import { get_route_classes } from './utils';
+import { get_route_classes, calculate_diff } from './utils';
 import { determine_time_ago } from './map';
 
 export const stops = new Map();
-window.stops = stops;
 
 function is_metro_stop(stop_code){
     return 2900 < Number(stop_code) && Number(stop_code) < 3400
@@ -134,11 +133,10 @@ async function load_stop_times(stop_code) {
 
 function display_stop_times(stop_routes) {
     function display_hours(scheduled, actual) {
-        if(typeof scheduled === 'number') {
-            scheduled %= 24 * 60;
+        if(scheduled === null) {
+            return ['-', null];
         }
-        actual %= 24 * 60;
-        const total_diff = typeof scheduled === 'number' ? actual - scheduled : null;
+        const total_diff = calculate_diff(scheduled, actual);
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
         const diff_html = `<span class="${diff_class}">${total_diff > 0 ? '+' : ''}${total_diff}</span>`;
@@ -175,32 +173,13 @@ function display_stop_times(stop_routes) {
             for(const { actual_time, scheduled_time } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                td.innerHTML = r[0] + (r[1] ? ` <br class="d-inline d-md-none"><span class="d-inline d-md-none">${r[1]}</span>` : '');
+                td.innerHTML = r[0] + (r[1] ? ` <br>${r[1]}` : '');
                 row.appendChild(td);
-                if(!r[1]) {
-                    const td2 = document.createElement('td');
-                    td2.innerHTML = r[1];
-                    td2.classList.add('d-none', 'd-md-table-cell');
-                    row.appendChild(td2);
-                }
-                else {
-                    td.setAttribute('colspan', '2');
-                }
             }
             for(let i = route.times.length; i < 3; i++) {
-                {
-                    const td = document.createElement('td');
-                    td.textContent = '-';
-                    td.setAttribute('colspan', '2');
-                    td.classList.add('d-none', 'd-md-table-cell');
-                    row.appendChild(td);
-                }
-                {
-                    const td = document.createElement('td');
-                    td.textContent = '-';
-                    td.classList.add('d-table-cell', 'd-md-none');
-                    row.appendChild(td);
-                }
+                const td = document.createElement('td');
+                td.textContent = '-';
+                row.appendChild(td);
             }
         }
         tbody.appendChild(row);
