@@ -295,7 +295,7 @@ function is_screen_width_lg_or_less() {
     return window.innerWidth <= 992;
 }
 
-function zoom_to_vehicle(type, inv_number) {
+export function zoom_to_vehicle(type, inv_number) {
     const vehicle = cache.find(v => v.type === type && v.inv_number === inv_number);
     const marker = vehicle.marker;
     const vehicles_panel = document.querySelector('#vehicles-panel');
@@ -306,7 +306,6 @@ function zoom_to_vehicle(type, inv_number) {
     marker.fireEvent('click');
     register_vehicle_view(type, inv_number);
 }
-window.zoom_to_vehicle = zoom_to_vehicle;
 
 function update_route_tables(route_tables) {
     for(const table of route_tables) {
@@ -371,7 +370,6 @@ function update_data_source(new_source) {
     set_setting('data_source', new_source);
     location.reload();
 }
-// window.update_data_source = update_data_source;
 
 function init_settings() {
     const data_source = get_setting('data_source');

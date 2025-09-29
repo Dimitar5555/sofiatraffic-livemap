@@ -314,6 +314,14 @@ export function get_vehicle_model(type, inv_number) {
     return { name: "Неизвестен модел" };
 }
 
+export function get_vehicle_model_name(type, inv_number) {
+    const model = get_vehicle_model(type, inv_number);
+    const name = model.name ?? "Неизвестен модел";
+    const fuel = model.fuel ?? '';
+    const length = model.length ? `(${model.length} m)` : '';
+    return [name, fuel, length].filter(x => x).join(' ');
+}
+
 export const models_by_type_and_models = {
     tram: models.tram.reduce((obj, item) => (obj[item.id] = item, obj), {}),
     trolley: models.trolley.reduce((obj, item) => (obj[item.id] = item, obj), {}),

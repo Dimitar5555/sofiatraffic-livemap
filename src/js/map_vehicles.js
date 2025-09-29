@@ -1,63 +1,184 @@
 import { determine_route_colour } from 'sofiatraffic-library';
 import { BG_TYPES_HTML, MIN_ACTIVE_SPEED } from './config';
 import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
-import { get_vehicle_model } from '/data/models';
+import { get_vehicle_model_name } from '/data/models';
 import { stops } from './map_stops';
-import { cache } from './app';
+import { cache, zoom_to_vehicle } from './app';
 import { determine_time_ago } from './map';
 
-function generate_vehicle_popup_text({ inv_number, type, route_ref, speed, next_stop, destination_stop, car, occupancy, timestamp, scheduled_time }, cache) {
-    const correct_inv_number = proper_inv_number(inv_number);
-    const classes = get_route_classes(type, route_ref).join(' ');
-    let text;
-    if(!route_ref) {
-        text = 'Няма маршрут';
-    }
-    else {
-        text = `${BG_TYPES_HTML[route_ref.startsWith('N') ? 'night' : type]} ${route_ref}`;
-    }
-    const next_stop_name = next_stop ? stops.get(next_stop)?.names.bg : null;
-    const destination_stop_name = destination_stop ? stops.get(destination_stop)?.names.bg : null;
-    const model = get_vehicle_model(type, inv_number);
-    const model_text = `${model?.name} ${model?.fuel?model.fuel:''} ${model?.length?'('+model.length+' m)':''}`;
-    const all_cars_on_line = cache.filter(v => v.type == type && v.route_ref == route_ref).sort((a, b) => a.car - b.car);
-    const total_cars = all_cars_on_line.at(-1).car;
-    const btn_classes = 'btn btn-sm btn-outline-dark mx-1';
-    const prev_inv_number = car != 1 && all_cars_on_line[0].car != car ? all_cars_on_line.findLast(v => v.car < car && v.marker)?.inv_number : null;
-    const prev_btn = `<button class="${btn_classes}" onclick="zoom_to_vehicle('${type}', ${typeof prev_inv_number !== 'string' ? prev_inv_number : '\'' + prev_inv_number + '\''})" ${prev_inv_number ? '' : 'disabled'}><i class="bi bi-arrow-left"></i></button>`;
-    const next_inv_number = car != total_cars ? all_cars_on_line.find(v => v.car > car && v.marker)?.inv_number : null;
-    const next_btn = `<button class="${btn_classes}" onclick="zoom_to_vehicle('${type}', ${typeof next_inv_number !== 'string' ? next_inv_number : '\'' + next_inv_number + '\''})" ${next_inv_number ? '' : 'disabled'}><i class="bi bi-arrow-right"></i></button>`;
-    const occupance_mappings = {
-        'EMPTY': 'Свободен',
-        'MANY_SEATS_AVAILABLE': 'Много места',
-        'FEW_SEATS_AVAILABLE': 'Малко места',
-        'STANDING_ROOM_ONLY': 'Само правостоящи',
-        'CRUSHED_STANDING_ROOM_ONLY': 'Претъпкан',
-        'FULL': 'Пълен',
-        'NOT_ACCEPTING_PASSENGERS': 'Не приема пътници',
-        'NO_DATA_AVAILABLE': 'Няма данни',
-        'NOT_BOARDABLE': 'Не превозва пътници'
-    };
-    const now_hh_mm = (new Date()).toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' }).split(':').map(Number);
-    const scheduled_time_hh_mm = typeof scheduled_time == 'number' ? [(Math.floor(scheduled_time / 60)) % 24, scheduled_time % 60] : null;
-    const now_mins = (now_hh_mm[0] * 60 + now_hh_mm[1]) % (24 * 60);
-    const scheduled_mins = scheduled_time_hh_mm ? (scheduled_time_hh_mm[0] * 60 + scheduled_time_hh_mm[1]) % (24 * 60) : null;
-    const delay = scheduled_mins ? (now_mins - scheduled_mins) % (24 * 60) : null;
-    const delay_text = `<span class="${-1 <= delay && delay <= 3 ? 'text-success' : 'text-danger fw-bold'}">${delay > 0 ? '+' : ''}${delay} мин.</span>`;
-    const occupance = occupancy && occupancy in occupance_mappings ? occupance_mappings[occupancy] : occupancy;
-    const to_return = '<div class="">'
-    + `<p class="text-center my-0">${car ? prev_btn : ''} ${correct_inv_number} на <span class="${classes}">${text}</span>${car ? ' / ' + car + ' ' + next_btn : ''}</p>`
-    + `${model_text}<br>`
-    // + (next_stop?`<i class="bi bi-geo-alt"></i> ${next_stop_name}<br>`:'')
-    + (destination_stop ? `<i class="bi bi-flag-fill"></i> ${destination_stop_name}<br>` : '')
-    + `<i class="bi bi-speedometer"></i> ${speed >= 0 ? speed+' km/h' : '-'}`
-    + (occupance ? ` <span class="occupancy float-end">${occupance}</span><br>` : '')
-    + (typeof delay == 'number' ? `<i class="bi bi-clock"></i> ` + delay_text : '')
-    + `<span data-timestamp="${timestamp}" class="float-end text-muted" id="last-updated">${determine_time_ago(timestamp)}</span><br>`
-    + '</div>';
+function generate_vehicle_popup_text(vehicle, cache) {
+    const {
+        inv_number,
+        type,
+        route_ref,
+        speed,
+        destination_stop,
+        car,
+        occupancy,
+        timestamp,
+        scheduled_time
+    } = vehicle;
 
-    return to_return;
+    // --- Helpers ---
+    const correctInvNumber = proper_inv_number(inv_number);
+    const classes = get_route_classes(type, route_ref).join(' ');
+    const destinationStopName = destination_stop ? stops.get(destination_stop)?.names.bg : null;
+    const modelText = get_vehicle_model_name(type, inv_number);
+
+    const allCarsOnLine = cache
+        .filter(v => v.type === type && v.route_ref === route_ref)
+        .sort((a, b) => a.car - b.car);
+    const totalCars = allCarsOnLine.at(-1)?.car || 0;
+
+
+    const parent_div = document.createElement('div');
+    parent_div.classList.add('d-flex', 'flex-column');
+    
+    const first_row = document.createElement('p');
+    first_row.classList.add('mb-1');
+    parent_div.appendChild(first_row);
+    {
+        first_row.classList.add('text-center', 'my-0');
+        first_row.appendChild(document.createTextNode(`${correctInvNumber} на `));
+        const route_text = ' ' + (route_ref ?? 'Няма маршрут');
+        const icon = document.createElement('i');
+        icon.className = `icon ${route_ref && route_ref.startsWith('N') ? 'night' : type}-icon`;
+        const route_num_span = document.createElement('span');
+        route_num_span.className = classes;
+        route_num_span.appendChild(icon);
+        route_num_span.appendChild(document.createTextNode(route_text));
+        first_row.appendChild(route_num_span);
+        if(car) {
+            first_row.appendChild(document.createTextNode(` / ${car}`));
+
+            if(car !== 1 && allCarsOnLine[0].car !== car) {
+                const prev_btn = document.createElement('button');
+                prev_btn.className = 'btn btn-sm btn-outline-dark mx-1';
+                const i = document.createElement('i');
+                i.className = 'bi bi-arrow-left';
+                prev_btn.appendChild(i);
+                const prevInvNumber = allCarsOnLine.findLast(v => v.car < car && v.marker)?.inv_number;
+                if (prevInvNumber) {
+                    prev_btn.addEventListener('click', () => {
+                        zoom_to_vehicle(type, prevInvNumber);
+                    });
+                    first_row.insertBefore(prev_btn, first_row.firstChild);
+                }
+            }
+
+            if(car !== totalCars) {
+                const next_btn = document.createElement('button');
+                next_btn.className = 'btn btn-sm btn-outline-dark mx-1';
+                const i = document.createElement('i');
+                i.className = 'bi bi-arrow-right';
+                next_btn.appendChild(i);
+                const nextInvNumber = allCarsOnLine.find(v => v.car > car && v.marker)?.inv_number;
+                if (nextInvNumber) {
+                    next_btn.addEventListener('click', () => {
+                        zoom_to_vehicle(type, nextInvNumber);
+                    });
+                    first_row.appendChild(next_btn);
+                }
+            }
+        }
+    }
+
+    {
+        const row = document.createElement('div');
+        parent_div.appendChild(row);
+        if(modelText) {
+            const model_span = document.createElement('span');
+            model_span.innerText = modelText;
+            model_span.classList.add('text-nowrap');
+            row.appendChild(model_span);
+        }
+    }
+
+    {
+        const row = document.createElement('div');
+        parent_div.appendChild(row);
+        if(destination_stop) {
+            const icon = document.createElement('i');
+            icon.className = 'bi bi-flag-fill';
+            row.appendChild(icon);
+            row.appendChild(document.createTextNode(' ' + (destinationStopName || 'неизвестна')));
+        }
+    }
+
+    {
+        const row = document.createElement('div');
+        row.classList.add('d-flex', 'justify-content-between');
+        parent_div.appendChild(row);
+
+
+        const speedIcon = document.createElement('i');
+        speedIcon.className = 'bi bi-speedometer';
+        const speed_div = document.createElement('div');
+
+        speed_div.appendChild(speedIcon);
+        speed_div.appendChild(document.createTextNode(' ' + (speed >= 0 ? speed : '-') + ' km/h'));
+        row.appendChild(speed_div);
+
+        if(occupancy) {
+            const occupancy_mappings = {
+                'EMPTY': 'Свободен',
+                'MANY_SEATS_AVAILABLE': 'Много места',
+                'FEW_SEATS_AVAILABLE': 'Малко места',
+                'STANDING_ROOM_ONLY': 'Само правостоящи',
+                'CRUSHED_STANDING_ROOM_ONLY': 'Претъпкан',
+                'FULL': 'Пълен',
+                'NOT_ACCEPTING_PASSENGERS': 'Не приема пътници',
+                'NO_DATA_AVAILABLE': 'Няма данни',
+                'NOT_BOARDABLE': 'Не превозва пътници'
+            };
+
+            const occupancy_text = occupancy_mappings[occupancy] || occupancy || '';
+            const span = document.createElement('span');
+            span.className = 'mt-auto text-nowrap';
+            span.appendChild(document.createTextNode(occupancy_text));
+            row.appendChild(span);
+        }
+    }
+    
+    {
+        const row = document.createElement('div');
+        row.classList.add('d-flex', 'justify-content-between');
+        parent_div.appendChild(row);
+        if(scheduled_time) {
+            const now_hh_mm = (new Date()).toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' }).split(':').map(Number); 
+            const scheduled_time_hh_mm = typeof scheduled_time == 'number' ? [(Math.floor(scheduled_time / 60)) % 24, scheduled_time % 60] : null;
+            const now_mins = (now_hh_mm[0] * 60 + now_hh_mm[1]) % (24 * 60); 
+            const scheduled_mins = scheduled_time_hh_mm ? (scheduled_time_hh_mm[0] * 60 + scheduled_time_hh_mm[1]) % (24 * 60) : null; 
+            const delay = scheduled_mins ? (now_mins - scheduled_mins) % (24 * 60) : null;
+
+            const delay_class = -1 <= delay && delay <= 3 ? 'text-success' : 'text-danger fw-bold';
+            const delayText = `${delay > 0 ? '+' : ''}${delay} мин.`;
+
+            const delay_div = document.createElement('div');
+            const clockIcon = document.createElement('i');
+            clockIcon.className = 'bi bi-clock';
+            delay_div.appendChild(clockIcon);
+            const delay_span = document.createElement('span');
+            delay_span.className = delay_class
+            delay_span.innerText = delayText;
+            delay_div.appendChild(document.createTextNode(' '));
+            delay_div.appendChild(delay_span);
+            row.appendChild(delay_div);
+        }
+        else{
+            row.appendChild(document.createElement('span'));
+        }
+
+        const span = document.createElement('span');
+        span.setAttribute('data-timestamp', timestamp);
+        span.classList.add('text-muted', occupancy ?? 'mt-auto');
+        span.id = 'last-updated';
+        span.innerText = determine_time_ago(timestamp);
+        row.appendChild(span);
+    }
+    return parent_div;
 }
+
 
 export function show_markers_in_view(map, vehicles_layer, cache) {
     const bounds = map.getBounds();
@@ -144,7 +265,7 @@ function bind_popup_and_tooltip(e, vehicle, cache) {
     const popup_options = {
         className : 'fs-6',
         closeButton: false,
-        minWidth: 250
+        minWidth: 275
     }
 
     const tooltip_options = {
