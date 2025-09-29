@@ -9,6 +9,7 @@
     left: 50%;
     max-height: 45%;
     overflow-y: auto;
+    min-width: 300px;
     max-width: 500px;
     transform: translateX(-50%);
 }
