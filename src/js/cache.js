@@ -4,7 +4,6 @@ import { depots_data } from '/data/depots';
 
 import { MIN_ACTIVE_SPEED } from './config';
 import { calculate_bearing, calculate_distance } from './utils';
-import { bearing } from 'turf';
 
 function is_vehicle_in_depot(type, coords) {
     return depots_data.some(depot => 

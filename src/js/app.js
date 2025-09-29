@@ -1,4 +1,4 @@
-import { polygon } from 'turf';
+import { polygon } from '@turf/helpers';
 import 'leaflet';
 import 'leaflet-rotatedmarker';
 import 'bootstrap/js/dist/collapse';

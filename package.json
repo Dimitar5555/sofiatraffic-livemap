@@ -18,6 +18,8 @@
     "@parcel/transformer-sass": "^2.14.4"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^7.2.0",
+    "@turf/helpers": "^7.2.0",
     "@turf/turf": "^7.2.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.12.1",
@@ -27,7 +29,6 @@
     "leaflet.locatecontrol": "^0.84.2",
     "parcel": "^2.14.4",
     "sofiatraffic-library": "github:dimitar5555/sofiatraffic-library#master",
-    "turf": "^3.0.14",
     "vitest": "^3.2.4"
   },
   "type": "module"
