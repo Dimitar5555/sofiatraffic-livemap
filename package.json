@@ -9,7 +9,7 @@
     "build-github": "parcel build ./src/index.html --public-url /sofiatraffic-livemap/",
     "build": "parcel build ./src/index.html",
     "dev": "parcel serve ./src/index.html",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -21,11 +21,14 @@
     "@turf/turf": "^7.2.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.12.1",
+    "jest": "^30.2.0",
     "leaflet": "^1.9.4",
     "leaflet-rotatedmarker": "^0.2.0",
     "leaflet.locatecontrol": "^0.84.2",
     "parcel": "^2.14.4",
     "sofiatraffic-library": "github:dimitar5555/sofiatraffic-library#master",
-    "turf": "^3.0.14"
-  }
+    "turf": "^3.0.14",
+    "vitest": "^3.2.4"
+  },
+  "type": "module"
 }

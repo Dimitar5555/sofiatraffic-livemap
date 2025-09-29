@@ -98,3 +98,23 @@ export function register_vehicle_view(type, inv_number, is_marker=false) {
         'value': is_marker
     });
 }
+
+export function calculate_diff(scheduled, actual) {
+    if(typeof scheduled !== 'number') {
+        return null;
+    }
+    if(actual < scheduled - 12 * 60) {
+        actual += 24 * 60;
+    }
+    else if(scheduled < actual - 12 * 60) {
+        scheduled += 24 * 60;
+    }
+    // scheduled %= 24 * 60;
+    // if(scheduled > actual) {
+    //     actual += 24 * 60;
+    // }
+    // else {
+    //     actual %= 24 * 60;
+    // }
+    return actual - scheduled;
+}
