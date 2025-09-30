@@ -12,6 +12,7 @@ import { WEBSOCKET_URL } from './config';
 import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, register_vehicle_view } from './utils';
 import { is_vehicle_expected_on_line } from '/data/expected_models';
 import { init_map, map, vehicles_layer } from './map';
+import './filter_stops.js';
 
 var websocket_connection = null;
 export var cache = [];
@@ -291,7 +292,7 @@ function populate_route_table(relevant_vehicles, tbody) {
     tbody.appendChild(tr);
 }
 
-function is_screen_width_lg_or_less() {
+export function is_screen_width_lg_or_less() {
     return window.innerWidth <= 992;
 }
 
@@ -299,7 +300,7 @@ export function zoom_to_vehicle(type, inv_number) {
     const vehicle = cache.find(v => v.type === type && v.inv_number === inv_number);
     const marker = vehicle.marker;
     const vehicles_panel = document.querySelector('#vehicles-panel');
-    if(is_screen_width_lg_or_less()){
+    if(is_screen_width_lg_or_less()) {
         vehicles_panel.classList.add('d-none');
     }
     map.flyTo(vehicle.coords, 17, { animate: false });

@@ -49,6 +49,19 @@
             <table id="vehicles_table" class="table table-sm table-bordered overflow-auto"></table>
         </div>
     </div>
+    <div id="stops-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
+        <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
+            &lt;
+        </button>
+        <div>
+            <input id="stop_name_filter" onkeyup="update_stop_suggestions()" placeholder="Въведете име или номер на спирка" class="form-control form-control-sm mb-2"></input>
+        </div>
+        <div class="table-container">
+            <table id="stops_table" class="table table-sm table-bordered overflow-auto">
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
     <div id="virtual-board-panel" class="panel panel-bottom position-absolute d-flex flex-column d-none p-3 rounded-top-4">
         <div class="d-flex flex-row justify-content-between mb-2">
             <span id="stop_name" class="fs-6"></span>
@@ -121,7 +134,7 @@
             </div>
         </div>
     </div>
-    <div id="info-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2 rounded-top-3">
+    <div id="info-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
             &lt;
         </button>
