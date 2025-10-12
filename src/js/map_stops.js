@@ -170,10 +170,22 @@ function display_stop_times(stop_routes) {
             row.appendChild(td);
         }
         {
-            for(const { actual_time, scheduled_time } of route.times) {
+            for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                td.innerHTML = r[0] + (r[1] ? ` <br>${r[1]}` : '');
+                let occupancy = '';
+                if(vehicle_occupancy) {
+                    const mappings = {
+                        'EMPTY': '<i class="bi bi-person text-success" title="Празен"></i>',
+                        'MANY_SEATS_AVAILABLE': '<i class="bi bi-person text-success" title="Много свободни места"></i>',
+                        'FEW_SEATS_AVAILABLE': '<i class="bi bi-people-fill text-success" title="Малко свободни места"></i>',
+                        'STANDING_ROOM_ONLY': '<i class="bi bi-people-fill text-danger" title="Само правостоящи"></i>',
+                        'CRUSHED_STANDING_ROOM_ONLY': '<i class="bi bi-people-fill text-danger" title="Претъпкано"></i>',
+                        'FULL': '<i class="bi bi-people-fill text-danger" title="Пълен"></i>'
+                    };
+                    occupancy = mappings[vehicle_occupancy] || vehicle_occupancy;
+                }
+                td.innerHTML = r[0] + (r[1] ? ` <br>${r[1]}` : '') + (occupancy ? ` ${occupancy}` : '');
                 row.appendChild(td);
             }
             for(let i = route.times.length; i < 3; i++) {
