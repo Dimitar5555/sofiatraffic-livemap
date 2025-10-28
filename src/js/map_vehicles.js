@@ -149,7 +149,13 @@ function generate_vehicle_popup_text(vehicle, cache) {
             const scheduled_time_hh_mm = typeof scheduled_time == 'number' ? [(Math.floor(scheduled_time / 60)) % 24, scheduled_time % 60] : null;
             const now_mins = (now_hh_mm[0] * 60 + now_hh_mm[1]) % (24 * 60); 
             const scheduled_mins = scheduled_time_hh_mm ? (scheduled_time_hh_mm[0] * 60 + scheduled_time_hh_mm[1]) % (24 * 60) : null; 
-            const delay = scheduled_mins ? (now_mins - scheduled_mins) % (24 * 60) : null;
+            let delay = scheduled_mins ? (now_mins - scheduled_mins) % (24 * 60) : null;
+            if(1000 < delay) {
+                delay -= 24 * 60;
+            }
+            else if(delay < -1000) {
+                delay += 24 * 60;
+            }
 
             const delay_class = -1 <= delay && delay <= 3 ? 'text-success' : 'text-danger fw-bold';
             const delayText = `${delay > 0 ? '+' : ''}${delay} мин.`;
