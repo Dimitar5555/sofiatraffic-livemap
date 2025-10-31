@@ -23,3 +23,16 @@ export const BG_TYPES_HTML = {
     'bus': `<i class="icon bus-icon"></i>`,
     'night': `<i class="icon night-icon"></i>`
 };
+
+export const occupancy_mappings = {
+    'EMPTY': 'Свободен',
+    'MANY_SEATS_AVAILABLE': 'Много места',
+    'FEW_SEATS_AVAILABLE': 'Малко места',
+    'STANDING_ROOM_ONLY': 'Само правостоящи',
+    'CRUSHED_STANDING_ROOM_ONLY': 'Претъпкан',
+    'FULL': 'Пълен',
+    'NOT_ACCEPTING_PASSENGERS': 'Не приема пътници',
+    'NO_DATA_AVAILABLE': 'Няма данни',
+    'NOT_BOARDABLE': 'Не превозва пътници',
+    null: 'Няма данни'
+};

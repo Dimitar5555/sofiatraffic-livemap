@@ -1,7 +1,8 @@
 import { routes, stops_layer } from './app';
-import { VIRTUAL_BOARD_URL } from './config';
+import { occupancy_mappings, VIRTUAL_BOARD_URL, occupancy_mappings, BG_TYPES } from './config';
 import { get_route_classes, calculate_diff } from './utils';
 import { determine_time_ago } from './map';
+import { get_vehicle_model, get_model_name } from '/data/models';
 
 export const stops = new Map();
 
@@ -139,7 +140,7 @@ function display_stop_times(stop_routes) {
         const total_diff = calculate_diff(scheduled, actual);
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
-        const diff_html = `<span class="${diff_class}">${total_diff > 0 ? '+' : ''}${total_diff}</span>`;
+        const diff_html = `<span class="${diff_class} text-nowrap">${total_diff > 0 ? '+' : ''}${total_diff == 0 ? 'навреме' : total_diff + ' мин.'}</span>`;
         
         const hour = (Math.floor(actual / 60) % 24);
         const minute = (actual % 60).toString().padStart(2, '0');
@@ -151,12 +152,13 @@ function display_stop_times(stop_routes) {
 
     const tbody = document.createElement('tbody');
     for(const route of stop_routes) {
-        const row = document.createElement('tr');
-        row.classList.add('text-center', 'align-middle');
+        const row0 = document.createElement('tr');
+        row0.classList.add('text-center', 'align-middle');
 
+        const { type, route_ref } = routes.find(r => r.cgm_id == route.cgm_id);
         {
-            const { type, route_ref } = routes.find(r => r.cgm_id == route.cgm_id);
             const td = document.createElement('td');
+            td.colSpan = '4';
             const span = document.createElement('span');
             span.setAttribute('class', get_route_classes(type, route_ref).join(' '));
             span.textContent = route_ref;
@@ -167,25 +169,39 @@ function display_stop_times(stop_routes) {
             td.appendChild(i);
 
             td.appendChild(document.createTextNode(stops.get(route.destination)?.names.bg || 'неизвестна'));
-            row.appendChild(td);
+            row0.appendChild(td);
         }
+        const row = document.createElement('tr');
+        row.classList.add('text-center', 'align-middle');
         {
-            for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy } of route.times) {
+            for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, inv_number, next_stop } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                let occupancy = '';
-                if(vehicle_occupancy) {
-                    const mappings = {
-                        'EMPTY': '<i class="bi bi-person text-success" title="Празен"></i>',
-                        'MANY_SEATS_AVAILABLE': '<i class="bi bi-person text-success" title="Много свободни места"></i>',
-                        'FEW_SEATS_AVAILABLE': '<i class="bi bi-people-fill text-success" title="Малко свободни места"></i>',
-                        'STANDING_ROOM_ONLY': '<i class="bi bi-people-fill text-danger" title="Само правостоящи"></i>',
-                        'CRUSHED_STANDING_ROOM_ONLY': '<i class="bi bi-people-fill text-danger" title="Претъпкано"></i>',
-                        'FULL': '<i class="bi bi-people-fill text-danger" title="Пълен"></i>'
-                    };
-                    occupancy = mappings[vehicle_occupancy] || vehicle_occupancy;
+                const model = inv_number ? get_vehicle_model(type, inv_number) : null;
+
+                let popover_content = ``;
+                popover_content += `${BG_TYPES[type]} ${inv_number ?? 'неизвестен'}<br>`;
+                popover_content += model ? `Модел: ${get_model_name(model)}<br>` : '';
+
+                const extras_icons = {
+                    'ac': '<i class="bi bi-snow"></i>',
+                    'low_floor': '<i class="bi bi-person-wheelchair"></i>'
                 }
-                td.innerHTML = r[0] + (r[1] ? ` <br>${r[1]}` : '') + (occupancy ? ` ${occupancy}` : '');
+                const extras_text = model && model.extras ? model.extras.map(extra => extras_icons[extra] || '').join(' ') : '';
+                popover_content += `Екстри: ${extras_text}<br>`;
+
+                const next_stop_obj = next_stop ? stops.get(next_stop) : null;
+                if(next_stop_obj) {
+                    popover_content += `Следваща спирка: [${next_stop_obj.code.toString().padStart(4, '0')}] ${next_stop_obj.names.bg}<br>`;
+                }
+                
+                let occupancy = occupancy_mappings[vehicle_occupancy];
+                popover_content += `Запълненост: ${occupancy}<br>`;
+
+                popover_content = popover_content.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
+
+                const popover_btn = `<i popovertarget="stop-time-popover" onclick="document.querySelector('#stop-time-popover').innerHTML = decodeURI(this.dataset.popoverContent); document.querySelector('#stop-time-popover').showPopover();" data-popover-content='${popover_content}' class="bi bi-info-circle"></i>`;
+                td.innerHTML = `<span class="text-nowrap">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
                 row.appendChild(td);
             }
             for(let i = route.times.length; i < 3; i++) {
@@ -194,6 +210,7 @@ function display_stop_times(stop_routes) {
                 row.appendChild(td);
             }
         }
+        tbody.appendChild(row0);
         tbody.appendChild(row);
     }
     if(stop_routes.length == 0) {

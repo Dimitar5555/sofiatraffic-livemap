@@ -1,5 +1,5 @@
 import { determine_route_colour } from 'sofiatraffic-library';
-import { BG_TYPES_HTML, MIN_ACTIVE_SPEED } from './config';
+import { BG_TYPES_HTML, MIN_ACTIVE_SPEED, occupancy_mappings } from './config';
 import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
 import { get_vehicle_model_name } from '/data/models';
 import { stops } from './map_stops';
@@ -120,18 +120,6 @@ function generate_vehicle_popup_text(vehicle, cache) {
         row.appendChild(speed_div);
 
         if(occupancy) {
-            const occupancy_mappings = {
-                'EMPTY': 'Свободен',
-                'MANY_SEATS_AVAILABLE': 'Много места',
-                'FEW_SEATS_AVAILABLE': 'Малко места',
-                'STANDING_ROOM_ONLY': 'Само правостоящи',
-                'CRUSHED_STANDING_ROOM_ONLY': 'Претъпкан',
-                'FULL': 'Пълен',
-                'NOT_ACCEPTING_PASSENGERS': 'Не приема пътници',
-                'NO_DATA_AVAILABLE': 'Няма данни',
-                'NOT_BOARDABLE': 'Не превозва пътници'
-            };
-
             const occupancy_text = occupancy_mappings[occupancy] || occupancy || '';
             const span = document.createElement('span');
             span.className = 'mt-auto text-nowrap';
