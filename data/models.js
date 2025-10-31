@@ -6,7 +6,8 @@ const models = {
             gauge: 1009,
             inv_number_ranges: [
                 [2301, 2399]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'tatra_t6a2_sf',
@@ -31,7 +32,8 @@ const models = {
             gauge: 1009,
             inv_number_ranges: [
                 [3401, 3420]
-            ]
+            ],
+            extras: ['low_floor']
         },
         {
             id: 'schindler',
@@ -39,7 +41,8 @@ const models = {
             gauge: 1009,
             inv_number_ranges: [
                 [601, 699]
-            ]
+            ],
+            extras: ['low_floor']
         },
         {
             id: 't8m_500_f',
@@ -55,7 +58,8 @@ const models = {
             gauge: 1009,
             inv_number_ranges: [
                 [901, 999]
-            ]
+            ],
+            extras: ['low_floor']
         },
         {
             id: 't6m_700_f',
@@ -118,7 +122,8 @@ const models = {
             length: 12,
             inv_number_ranges: [
                 [1601, 1649]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'skoda_27tr_3',
@@ -127,7 +132,8 @@ const models = {
             inv_number_ranges: [
                 [1650, 1699],
                 [2675, 2699]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'skoda_27tr_4',
@@ -135,7 +141,8 @@ const models = {
             length: 18,
             inv_number_ranges: [
                 [2801, 2899]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         }
     ],
     bus: [
@@ -150,7 +157,8 @@ const models = {
                 [2000, 2045],
                 [2300, 2399],
                 [3100, 3199]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'yutong_diesel',
@@ -159,14 +167,16 @@ const models = {
                 [1201, 1299],
                 [2046, 2099],
                 [3600, 3649]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'yutong_cng',
             name: 'Yutong ZK6126HGA CNG',
             inv_number_ranges: [
                 [3650, 3699]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'bmc_procity',
@@ -176,7 +186,8 @@ const models = {
                 [2500, 2599],
                 [3400, 3499],
                 [7041, 7171]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'mb_conecto_g',
@@ -192,7 +203,8 @@ const models = {
             name: 'Mercedes-Benz Conecto LF',
             inv_number_ranges: [
                 [1801, 1899]
-            ]
+            ],
+            extras: ['low_floor']
         },
         {
             id: 'karsan_ejest',
@@ -200,7 +212,8 @@ const models = {
             inv_number_ranges: [
                 [1010, 1099],
                 [25010, 25050]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'bmc_belde',
@@ -208,7 +221,8 @@ const models = {
             inv_number_ranges: [
                 [2720, 2799],
                 [3700, 3899]
-            ]
+            ],
+            extras: ['low_floor']
         },
         {
             id: 'higer_12m',
@@ -216,7 +230,8 @@ const models = {
             inv_number_ranges: [
                 [1701, 1703],
                 [5001, 5099]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'higer_9m',
@@ -232,7 +247,8 @@ const models = {
             inv_number_ranges: [
                 [2800, 2899],
                 [3011, 3099]
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         },
         {
             id: 'mb_conecto_s',
@@ -253,15 +269,16 @@ const models = {
             name: 'Mercedes-Benz Intouro',
             inv_number_ranges: [
                 [1301, 1399]
-            ]
+            ],
+            extras: ['ac']
         },
         {
             id: 'man_dd',
             name: 'MAN A39 Lion\'s City DD',
-            double_decker: true,
             inv_number_ranges: [
                 [2602, 2605]
-            ]
+            ],
+            extras: ['ac', 'low_floor', 'double_decker']
         },
         {
             id: 'mb_o345g',
@@ -273,10 +290,10 @@ const models = {
         {
             id: 'neoplan_dd',
             name: 'Neoplan Centroliner',
-            double_decker: true,
             inv_number_ranges: [
                 2601
-            ]
+            ],
+            extras: ['ac', 'low_floor', 'double_decker']
         },
         {
             id: 'man_lions_city_12m',
@@ -286,7 +303,8 @@ const models = {
             inv_number_ranges: [
                 7173,
                 7175
-            ]
+            ],
+            extras: ['ac', 'low_floor']
         }
     ]
 };
