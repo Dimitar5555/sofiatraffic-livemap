@@ -277,7 +277,7 @@ function populate_route_table(relevant_vehicles, tbody) {
             tbody.setAttribute('data-unexpected', 'true');
         }
         const model = get_vehicle_model(vehicle.type, vehicle_inv_number);
-        if(model.double_decker) {
+        if(model.extras && model.extras.includes('double_decker')) {
             btn.dataset.doubleDecker = 'true';
             tbody.setAttribute('data-double-decker', 'true');
         }
