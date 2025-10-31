@@ -334,10 +334,7 @@ export function get_vehicle_model(type, inv_number) {
 
 export function get_vehicle_model_name(type, inv_number) {
     const model = get_vehicle_model(type, inv_number);
-    const name = model.name ?? "Неизвестен модел";
-    const fuel = model.fuel ?? '';
-    const length = model.length ? `(${model.length} m)` : '';
-    return [name, fuel, length].filter(x => x).join(' ');
+    return get_model_name(model);
 }
 
 export const models_by_type_and_models = {
@@ -345,3 +342,10 @@ export const models_by_type_and_models = {
     trolley: models.trolley.reduce((obj, item) => (obj[item.id] = item, obj), {}),
     bus: models.bus.reduce((obj, item) => (obj[item.id] = item, obj), {})
 };
+
+export function get_model_name(model) {
+    const name = model.name ?? "Неизвестен модел";
+    const fuel = model.fuel ?? '';
+    const length = model.length ? `(${model.length} m)` : '';
+    return [name, fuel, length].filter(x => x).join(' ');
+}
