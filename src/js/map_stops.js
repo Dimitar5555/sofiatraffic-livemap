@@ -204,7 +204,7 @@ function display_stop_times(stop_routes) {
                 td.innerHTML = `<span class="text-nowrap">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
                 row.appendChild(td);
             }
-            for(let i = route.times.length; i < 3; i++) {
+            for(let i = route.times.length; i < 4; i++) {
                 const td = document.createElement('td');
                 td.textContent = '-';
                 row.appendChild(td);
