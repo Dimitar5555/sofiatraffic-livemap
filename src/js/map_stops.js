@@ -151,6 +151,7 @@ function display_stop_times(stop_routes) {
     }
 
     const tbody = document.createElement('tbody');
+    let first_row = true;
     for(const route of stop_routes) {
         const row0 = document.createElement('tr');
         row0.classList.add('text-center', 'align-middle');
@@ -202,13 +203,20 @@ function display_stop_times(stop_routes) {
 
                 const popover_btn = `<i popovertarget="stop-time-popover" onclick="document.querySelector('#stop-time-popover').innerHTML = decodeURI(this.dataset.popoverContent); document.querySelector('#stop-time-popover').showPopover();" data-popover-content='${popover_content}' class="bi bi-info-circle"></i>`;
                 td.innerHTML = `<span class="text-nowrap">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
+                if(first_row) {
+                    td.classList.add('col-3');
+                }
                 row.appendChild(td);
             }
             for(let i = route.times.length; i < 4; i++) {
                 const td = document.createElement('td');
                 td.textContent = '-';
+                if(first_row) {
+                    td.classList.add('col-3');
+                }
                 row.appendChild(td);
             }
+            first_row = false;
         }
         tbody.appendChild(row0);
         tbody.appendChild(row);
