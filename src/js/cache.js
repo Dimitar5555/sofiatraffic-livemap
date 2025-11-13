@@ -58,6 +58,7 @@ export function handle_tram_compositions(cache, data_source) {
             const copy = JSON.parse(JSON.stringify(first_wagon_entry));
             copy.inv_number = composition_inv_number;
             copy.full_inv_number = `${first_wagon}+${second_wagon}`;
+            copy.cgm_id = `composition_${first_wagon}_${second_wagon}`;
             cache.push(copy);
         }
         else {
@@ -89,7 +90,7 @@ export function handle_tram_compositions(cache, data_source) {
 
 export function add_to_cache(vehicle, tables_to_update, cache) {
     let cache_entry = cache.find(entry => 
-        entry.type === vehicle.type && entry.inv_number === vehicle.inv_number);
+        entry.cgm_id === vehicle.cgm_id);
 
     const same_timestamp = cache_entry && cache_entry.timestamp === vehicle.timestamp;
     const same_coords = cache_entry && cache_entry.coords[0] === vehicle.coords[0] && cache_entry.coords[1] === vehicle.coords[1];

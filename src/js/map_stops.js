@@ -178,7 +178,8 @@ function display_stop_times(stop_routes) {
             for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, inv_number, next_stop } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                const model = inv_number ? get_vehicle_model(type, inv_number) : null;
+                const vehicle = cache.find(v => v.inv_number == inv_number && v.type == type);
+                const model = inv_number ? get_vehicle_model(vehicle) : null;
 
                 let popover_content = ``;
                 popover_content += `${BG_TYPES[type]} ${inv_number ?? 'неизвестен'}<br>`;

@@ -1184,15 +1184,17 @@ const expected_models_per_line = [
     }
 ];
 
-export function is_vehicle_expected_on_line(type, route_ref, inv_number) {
+export function is_vehicle_expected_on_line(vehicle) {
+    let  { inv_number } = vehicle;
+    const { type, route_ref } = vehicle;
     if(typeof inv_number === 'string') {
         inv_number = parseInt(inv_number.split('/')[0]);
     }
     const line = expected_models_per_line.find(line => 
         line.type === type
         && line.route_ref == route_ref);
-    const model = get_vehicle_model(type, inv_number);
-    const depot = get_vehicle_depot(type, inv_number);
+    const model = get_vehicle_model(vehicle);
+    const depot = get_vehicle_depot(vehicle);
     if(!line || !model && model.id || !depot) {
         return true;
     }

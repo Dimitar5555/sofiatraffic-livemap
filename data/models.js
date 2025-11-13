@@ -187,6 +187,9 @@ const models = {
                 [3400, 3499],
                 [7041, 7171]
             ],
+            extra_check: (vehicle) => {
+                return vehicle.cgm_id.startsWith('A');
+            },
             extras: ['ac', 'low_floor']
         },
         {
@@ -211,8 +214,11 @@ const models = {
             name: 'Karsan e-JEST',
             inv_number_ranges: [
                 [1010, 1099],
-                [25010, 25050]
+                [2501, 2505]
             ],
+            extra_check: (vehicle) => {
+                return vehicle.cgm_id.startsWith('TB');
+            },
             extras: ['ac', 'low_floor']
         },
         {
@@ -309,13 +315,17 @@ const models = {
     ]
 };
 
-export function get_vehicle_model(type, inv_number) {
+export function get_vehicle_model(vehicle) {
+    const { type, cgm_id } = vehicle;
+    let { inv_number } = vehicle;
     if(typeof inv_number === 'string') {
         inv_number = parseInt(inv_number.split('/')[0]);
     }
-
     for (const model of models[type]) {
         for (const range of model.inv_number_ranges) {
+            if(model.extra_check && !model.extra_check(vehicle)) {
+                continue;
+            }
             if(typeof range === 'object') {
                 const [lb, rb] = range;
                 if (lb <= inv_number && inv_number <= rb) {
@@ -332,8 +342,8 @@ export function get_vehicle_model(type, inv_number) {
     return { name: "Неизвестен модел" };
 }
 
-export function get_vehicle_model_name(type, inv_number) {
-    const model = get_vehicle_model(type, inv_number);
+export function get_vehicle_model_name(vehicle) {
+    const model = get_vehicle_model(vehicle);
     return get_model_name(model);
 }
 

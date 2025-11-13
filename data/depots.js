@@ -85,8 +85,11 @@ export const depots_data = [
         type: ['tram', 'bus'],
         name: 'Красно село',
         inv_number_ranges: [
-            [25010, 25050],
+            [2501, 2505],
         ],
+        extra_check: (vehicle) => {
+            return vehicle.cgm_id.startsWith('TB');
+        },
         geometry: [
             [
                 [42.6761833, 23.2797674],
@@ -285,6 +288,9 @@ export const depots_data = [
         inv_number_ranges: [
             [2000, 2999]
         ],
+        extra_check: (vehicle) => {
+            return vehicle.cgm_id.startsWith('A');
+        },
         geometry: [
             [
                 [42.7144709, 23.3583078],
@@ -361,12 +367,20 @@ function is_inv_number_in_range(inv_number, range) {
     }
 }
 
-export function get_vehicle_depot(type, inv_number) {
+export function get_vehicle_depot(vehicle) {
+    let { inv_number } = vehicle;
+    if(typeof inv_number === 'string') {
+        inv_number = Number(inv_number.split('/')[0]);
+    }
+    const { type } = vehicle;
     const elligible_depots = depots_data.filter(depot => 
         typeof depot.type === 'string' && depot.type === type || 
         typeof depot.type === 'object' && depot.type.includes(type));
 
     for(const depot of elligible_depots) {
+        if(depot.extra_check && !depot.extra_check(vehicle)) {
+            continue;
+        }
         for(const range of depot.inv_number_ranges) {
             if(typeof range[0] === 'string' && range[0] === type) {
                 if (is_inv_number_in_range(inv_number, range[1])) {

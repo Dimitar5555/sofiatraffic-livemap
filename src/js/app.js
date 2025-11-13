@@ -251,10 +251,16 @@ function generate_route_table(type, route_ref) {
         tr.appendChild(th);
         tbody.appendChild(tr);
     }
+    {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    }
     return tbody;
 }
 
-function populate_route_table(relevant_vehicles, tbody) {
+function populate_route_table(relevant_vehicles, tbody, table_cell) {
     relevant_vehicles.sort((a, b) => proper_inv_number_for_sorting(a.inv_number)-proper_inv_number_for_sorting(b.inv_number));
     const tr = document.createElement('tr');
     const td = document.createElement('td');
@@ -263,20 +269,21 @@ function populate_route_table(relevant_vehicles, tbody) {
         const btn = document.createElement('button');
         btn.classList.add('vehicle-btn', 'btn', 'btn-outline-dark', 'btn-sm');
         btn.addEventListener('click', (e) => {
-            zoom_to_vehicle(vehicle.type, vehicle.inv_number);
+            zoom_to_vehicle(vehicle.cgm_id);
         });
         const vehicle_inv_number = typeof vehicle.inv_number == 'string' ? vehicle.inv_number.split('/')[0] : vehicle.inv_number;
-        const depot = get_vehicle_depot(vehicle.type, vehicle_inv_number);
+        const depot = get_vehicle_depot(vehicle);
         if(!depot) console.log(depot, vehicle.type, vehicle.inv_number);
         btn.setAttribute('data-depot-id', depot.id);
         btn.setAttribute('data-inv-number', vehicle.full_inv_number ?? vehicle.inv_number);
+        btn.setAttribute('data-cgm-id', vehicle.cgm_id);
         if(vehicle.is_unexpected) {
             btn.classList.add('btn-warning');
             btn.classList.remove('btn-outline-dark');
             btn.setAttribute('data-is-unexpected', 'true');
             tbody.setAttribute('data-unexpected', 'true');
         }
-        const model = get_vehicle_model(vehicle.type, vehicle_inv_number);
+        const model = get_vehicle_model(vehicle);
         if(model.extras && model.extras.includes('double_decker')) {
             btn.dataset.doubleDecker = 'true';
             tbody.setAttribute('data-double-decker', 'true');
@@ -287,17 +294,18 @@ function populate_route_table(relevant_vehicles, tbody) {
         btns.push(btn);
     }
     btns.sort((a, b) => a.dataset.car - b.dataset.car);
-    btns.forEach(btn => td.appendChild(btn));
-    tr.appendChild(td);
-    tbody.appendChild(tr);
+    table_cell.replaceChildren(...btns);
+    // btns.forEach(btn => td.appendChild(btn));
+    // tr.appendChild(td);
+    // tbody.appendChild(tr);
 }
 
 export function is_screen_width_lg_or_less() {
     return window.innerWidth <= 992;
 }
 
-export function zoom_to_vehicle(type, inv_number) {
-    const vehicle = cache.find(v => v.type === type && v.inv_number === inv_number);
+export function zoom_to_vehicle(cgm_id) {
+    const vehicle = cache.find(v => v.cgm_id === cgm_id);
     const marker = vehicle.marker;
     const vehicles_panel = document.querySelector('#vehicles-panel');
     if(is_screen_width_lg_or_less()) {
@@ -305,7 +313,7 @@ export function zoom_to_vehicle(type, inv_number) {
     }
     map.flyTo(vehicle.coords, 17, { animate: false });
     marker.fireEvent('click');
-    register_vehicle_view(type, inv_number);
+    register_vehicle_view(vehicle.type, vehicle.inv_number);
 }
 
 function update_route_tables(route_tables) {
@@ -315,20 +323,18 @@ function update_route_tables(route_tables) {
             route_ref = null;
         }
         
-        const old_tbody = document.querySelector(`#${type}_${route_ref}`);
+        const tbody = document.querySelector(`#${type}_${route_ref}`);
+        const vehicles_cell = tbody.querySelector('tr > td');
         try {
             const cgm_route_id = routes.find(route => route.type === type && route.route_ref === route_ref).cgm_id;
             const relevant_vehicles = cache.filter(vehicle => vehicle.type === type && vehicle.cgm_route_id === cgm_route_id && vehicle.hidden !== true);
             for(const v of relevant_vehicles) {
-                v.is_unexpected = !is_vehicle_expected_on_line(type, route_ref, v.inv_number);
+                v.is_unexpected = !is_vehicle_expected_on_line(v);
             }
-            const new_tbody = old_tbody.cloneNode();
-            new_tbody.appendChild(old_tbody.children[0]);
-            populate_route_table(relevant_vehicles, new_tbody)
-            old_tbody.replaceWith(new_tbody);
+            populate_route_table(relevant_vehicles, tbody, vehicles_cell)
         }
-        catch (err){
-            console.error(err)
+        catch (err) {
+            console.error(err);
             console.log(type, route_ref,`#${type}_${route_ref}`, table);
         }
     }

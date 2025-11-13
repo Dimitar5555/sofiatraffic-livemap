@@ -23,7 +23,7 @@ function generate_vehicle_popup_text(vehicle, cache) {
     const correctInvNumber = proper_inv_number(inv_number);
     const classes = get_route_classes(type, route_ref).join(' ');
     const destinationStopName = destination_stop ? stops.get(destination_stop)?.names.bg : null;
-    const modelText = get_vehicle_model_name(type, inv_number);
+    const modelText = get_vehicle_model_name(vehicle);
 
     const allCarsOnLine = cache
         .filter(v => v.type === type && v.route_ref === route_ref)
@@ -57,10 +57,10 @@ function generate_vehicle_popup_text(vehicle, cache) {
                 const i = document.createElement('i');
                 i.className = 'bi bi-arrow-left';
                 prev_btn.appendChild(i);
-                const prevInvNumber = allCarsOnLine.findLast(v => v.car < car && v.marker)?.inv_number;
-                if (prevInvNumber) {
+                const prev_cgm_id = allCarsOnLine.findLast(v => v.car < car && v.marker)?.cgm_id;
+                if (prev_cgm_id) {
                     prev_btn.addEventListener('click', () => {
-                        zoom_to_vehicle(type, prevInvNumber);
+                        zoom_to_vehicle(prev_cgm_id);
                     });
                     first_row.insertBefore(prev_btn, first_row.firstChild);
                 }
@@ -72,10 +72,10 @@ function generate_vehicle_popup_text(vehicle, cache) {
                 const i = document.createElement('i');
                 i.className = 'bi bi-arrow-right';
                 next_btn.appendChild(i);
-                const nextInvNumber = allCarsOnLine.find(v => v.car > car && v.marker)?.inv_number;
-                if (nextInvNumber) {
+                const next_cgm_id = allCarsOnLine.find(v => v.car > car && v.marker)?.cgm_id;
+                if (next_cgm_id) {
                     next_btn.addEventListener('click', () => {
-                        zoom_to_vehicle(type, nextInvNumber);
+                        zoom_to_vehicle(next_cgm_id);
                     });
                     first_row.appendChild(next_btn);
                 }
