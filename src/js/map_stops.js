@@ -1,4 +1,4 @@
-import { routes, stops_layer } from './app';
+import { routes, cache } from './app';
 import { occupancy_mappings, VIRTUAL_BOARD_URL, occupancy_mappings, BG_TYPES } from './config';
 import { get_route_classes, calculate_diff } from './utils';
 import { determine_time_ago } from './map';
@@ -175,14 +175,14 @@ function display_stop_times(stop_routes) {
         const row = document.createElement('tr');
         row.classList.add('text-center', 'align-middle');
         {
-            for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, inv_number, next_stop } of route.times) {
+            for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, cgm_vehicle_id, next_stop } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                const vehicle = cache.find(v => v.inv_number == inv_number && v.type == type);
-                const model = inv_number ? get_vehicle_model(vehicle) : null;
+                const vehicle = cache.find(v => v.cgm_id == cgm_vehicle_id);
+                const model = vehicle ? get_vehicle_model(vehicle) : null;
 
                 let popover_content = ``;
-                popover_content += `${BG_TYPES[type]} ${inv_number ?? 'неизвестен'}<br>`;
+                popover_content += `${BG_TYPES[type]} ${vehicle?.inv_number ?? 'неизвестен'}<br>`;
                 popover_content += model ? `Модел: ${get_model_name(model)}<br>` : '';
 
                 const extras_icons = {
