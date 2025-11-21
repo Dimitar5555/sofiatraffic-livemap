@@ -76,7 +76,10 @@
         <table class="table table-bordered">
             <tbody></tbody>
         </table>
-        <p id="last-updated" class="text-muted text-end" data-timestamp=""></p>
+        <p class="d-flex flex-row justify-content-between mb-0">
+            <button id="refresh-virtual-board" class="btn btn-sm btn-outline-primary" onclick="update_stop_times(Number(this.dataset.code))"><i class="bi bi-arrow-clockwise"></i> Обнови</button>
+            <span id="last-updated" class="text-muted" data-timestamp=""></span>
+        </p>
     </div>
     <div id="settings-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">

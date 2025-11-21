@@ -53,30 +53,7 @@ function get_stop_marker(stop) {
         }
     })
     .on('click', async (e) => {
-        const panel = document.querySelector('#virtual-board-panel');
-        {
-            const old_tbody = panel.querySelector('tbody');
-            const loading_tbody = document.createElement('tbody');
-            const loading_row = document.createElement('tr');
-            const loading_td = document.createElement('td');
-            loading_td.innerHTML = '<i class="bi bi-arrow-clockwise loading-icon"></i> Зареждане...';
-            loading_row.appendChild(loading_td);
-            loading_tbody.appendChild(loading_row);
-
-            old_tbody.replaceWith(loading_tbody);
-        }
-        panel.querySelector('#stop_name').textContent = `[${stop.code.toString().padStart(4, '0')}] ${stop.names.bg}`;
-        panel.classList.remove('d-none');
-        const times = await load_stop_times(stop.code);
-        const new_tbody = display_stop_times(times);
-        const old_tbody = panel.querySelector('tbody');
-        if(old_tbody) {
-            old_tbody.replaceWith(new_tbody);
-        }
-        const last_updated_el = panel.querySelector('#last-updated');
-        last_updated_el.setAttribute('data-timestamp', (Date.now() / 1000).toString());
-        last_updated_el.textContent = determine_time_ago(Date.now() / 1000);
-
+        await update_stop_times(stop.code);
     })
     .on('popupclose', (e) => {
         e.target.unbindPopup();
@@ -84,6 +61,41 @@ function get_stop_marker(stop) {
     stop.marker = marker;
     return marker;
 }
+
+async function update_stop_times(stop_code) {
+    const panel = document.querySelector('#virtual-board-panel');
+    const refresh_btn = panel.querySelector('#refresh-virtual-board');
+    const last_updated_el = panel.querySelector('#last-updated');
+    last_updated_el.setAttribute('data-timestamp', '');
+    last_updated_el.textContent = '';
+    refresh_btn.dataset.code = stop_code;
+    refresh_btn.disabled = true;
+    {
+        const old_tbody = panel.querySelector('tbody');
+        const loading_tbody = document.createElement('tbody');
+        const loading_row = document.createElement('tr');
+        const loading_td = document.createElement('td');
+        loading_td.classList.add('text-center', 'py-3');
+        loading_td.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Зареждане...';
+        loading_row.appendChild(loading_td);
+        loading_tbody.appendChild(loading_row);
+
+        old_tbody.replaceWith(loading_tbody);
+    }
+    const stop = stops.get(stop_code);
+    panel.querySelector('#stop_name').textContent = `[${stop.code.toString().padStart(4, '0')}] ${stop.names.bg}`;
+    panel.classList.remove('d-none');
+    const times = await load_stop_times(stop.code);
+    const new_tbody = display_stop_times(times);
+    const old_tbody = panel.querySelector('tbody');
+    if(old_tbody) {
+        old_tbody.replaceWith(new_tbody);
+    }
+    refresh_btn.disabled = false;
+    last_updated_el.setAttribute('data-timestamp', (Date.now() / 1000).toString());
+    last_updated_el.textContent = determine_time_ago(Date.now() / 1000);
+}
+window.update_stop_times = update_stop_times;
 
 function are_stops_shown(map) {
     const zoom = map.getZoom();
