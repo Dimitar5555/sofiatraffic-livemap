@@ -319,13 +319,13 @@ export function zoom_to_vehicle(cgm_id) {
 function update_route_tables(route_tables) {
     for(const table of route_tables) {
         let [type, route_ref] = table.split('/');
-        if(route_ref === 'null' || !route_ref) {
+        if(route_ref === 'null' || !route_ref || route_ref === 'undefined') {
             route_ref = null;
         }
         
-        const tbody = document.querySelector(`#${type}_${route_ref}`);
-        const vehicles_cell = tbody.querySelector('tr > td');
         try {
+            const tbody = document.querySelector(`#${type}_${route_ref}`);
+            const vehicles_cell = tbody.querySelector('tr > td');
             const cgm_route_id = routes.find(route => route.type === type && route.route_ref === route_ref).cgm_id;
             const relevant_vehicles = cache.filter(vehicle => vehicle.type === type && vehicle.cgm_route_id === cgm_route_id && vehicle.hidden !== true);
             for(const v of relevant_vehicles) {
