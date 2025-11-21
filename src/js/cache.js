@@ -99,6 +99,10 @@ export function add_to_cache(vehicle, tables_to_update, cache) {
         return;
     }
 
+    if(vehicle.type != 'bus' && typeof vehicle.route_ref === 'string' && vehicle.route_ref.endsWith('TM')) {
+        vehicle.type = 'bus';
+    }
+
     if(vehicle.route_ref) {
         tables_to_update.add(`${vehicle.type}/${vehicle.route_ref}`);
     }
