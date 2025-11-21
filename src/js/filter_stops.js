@@ -22,17 +22,16 @@ function filter_stops(term) {
 }
 
 window.update_stop_suggestions = function() {
-    const old_tbody = document.querySelector('table#stops_table > tbody');
+    const old_td = document.querySelector('table#stops_table > tbody td');
     const term = document.querySelector('#stop_name_filter').value;
     const matches = filter_stops(term);
     console.log(term, matches);
-    const new_tbody = document.createElement('tbody');
+    const new_td = document.createElement('td');
     for(const code of matches) {
         const stop = stops.get(code);
-        const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.onclick = () => {
-            map.flyTo(stop.coords, 18, {animate: false});
+        const btn = document.createElement('button');
+        btn.onclick = () => {
+                map.flyTo(stop.coords, 18, {animate: false});
             setTimeout(() => {
                 stop.marker.fire('click');
                 if(is_screen_width_lg_or_less()) {
@@ -40,13 +39,12 @@ window.update_stop_suggestions = function() {
                     panel.classList.add('d-none');
                 }
             }, 50);
-        }
-        const td = document.createElement('td');
+        };
+        btn.classList.add('btn', 'btn-light', 'w-100', 'text-start', 'mb-1', 'px-1');
         const code_text = stop.code.toString().padStart(4, '0');
         const name_text = stop.names.bg;
-        td.textContent = `[${code_text}] ${name_text}`;
-        tr.appendChild(td);
-        new_tbody.appendChild(tr);
+        btn.textContent = `[${code_text}] ${name_text}`;
+        new_td.appendChild(btn);
     }
-    old_tbody.replaceWith(new_tbody);
+    old_td.replaceWith(new_td);
 }
