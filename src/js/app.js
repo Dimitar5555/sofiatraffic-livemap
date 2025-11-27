@@ -389,4 +389,8 @@ function init_settings() {
             }
         });
     });
+
+    const virtual_board_show_relative = get_setting('stop_time_style') === 'absolute';
+    const check_el = document.querySelector('#virtual_board_show_relative');
+    check_el.toggleAttribute('checked', virtual_board_show_relative);
 }

@@ -90,6 +90,7 @@ async function update_stop_times(stop_code) {
     const old_tbody = panel.querySelector('tbody');
     if(old_tbody) {
         old_tbody.replaceWith(new_tbody);
+        refresh_stop_times();
     }
     refresh_btn.disabled = false;
     last_updated_el.setAttribute('data-timestamp', (Date.now() / 1000).toString());
@@ -144,6 +145,32 @@ async function load_stop_times(stop_code) {
     return data.routes;
 }
 
+function refresh_stop_times(style) {
+    if(!style) {
+        style = localStorage.getItem('livemap_stop_time_style') || 'relative';
+    }
+    localStorage.setItem('livemap_stop_time_style', style);
+    const panel = document.querySelector('#virtual-board-panel');
+    const elements = panel.querySelectorAll('span[data-stop-time]');
+    const now1 = new Date();
+    const now_hour = now1.getHours() * 60;
+    const now_minute = now1.getMinutes();
+    const current_time = now_hour + now_minute;
+    for(const el of elements) {
+        const stop_time = Number(el.getAttribute('data-stop-time'));
+        if(style == 'relative') {
+            const diff = stop_time - current_time;
+            el.textContent = `${diff} мин.`;
+        }
+        else {
+            const hour = Math.floor(stop_time / 60) % 24;
+            const minute = (stop_time % 60).toString().padStart(2, '0');
+            el.textContent = `${(hour % 24).toString().padStart(2, '0')}:${minute}`;
+        }
+    }
+}
+window.refresh_stop_times = refresh_stop_times;
+
 function display_stop_times(stop_routes) {
     function display_hours(scheduled, actual) {
         if(scheduled === null) {
@@ -153,11 +180,8 @@ function display_stop_times(stop_routes) {
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
         const diff_html = `<span class="${diff_class} text-nowrap">${total_diff > 0 ? '+' : ''}${total_diff == 0 ? 'навреме' : total_diff + ' мин.'}</span>`;
-        
-        const hour = (Math.floor(actual / 60) % 24);
-        const minute = (actual % 60).toString().padStart(2, '0');
-        
-        const actual_formatted = `${(hour % 24).toString().padStart(2, '0')}:${minute}`;
+                
+        const actual_formatted = `<span data-stop-time="${actual}"></span>`;
         
         return [actual_formatted, total_diff === null ? null : diff_html];
     }

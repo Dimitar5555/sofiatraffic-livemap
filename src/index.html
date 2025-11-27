@@ -80,6 +80,12 @@
             <button id="refresh-virtual-board" class="btn btn-sm btn-outline-primary" onclick="update_stop_times(Number(this.dataset.code))"><i class="bi bi-arrow-clockwise"></i> Обнови</button>
             <span id="last-updated" class="text-muted" data-timestamp=""></span>
         </p>
+        <p class="mb-0">
+            <input class="form-check-input" type="checkbox" id="virtual_board_show_relative" onclick="refresh_stop_times(this.checked ? 'absolute' : 'relative')">
+            <label class="form-check-label" for="virtual_board_show_relative">
+                Показвай точен час на пристигане
+            </label>
+        </p>
     </div>
     <div id="settings-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
