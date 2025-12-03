@@ -46,8 +46,11 @@ function init_websocket(attempts=1) {
             if(!vehicle.type && vehicle.cgm_route_id) {
                 vehicle.type = routes.find(r => r.cgm_id == vehicle.cgm_route_id)?.type;
             }
+            const is_trolley = vehicle.type === 'trolley';
             const fake_trolleys = ['60', '73', '74', '123', '288', '801'];
-            if(fake_trolleys.includes(vehicle.route_ref)) {
+            const is_on_fake_trolley_route = fake_trolleys.includes(vehicle.route_ref);
+            const is_inv_number_in_bus_range = 5000 <= vehicle.inv_number && vehicle.inv_number < 6000;
+            if(is_trolley && (is_on_fake_trolley_route || is_inv_number_in_bus_range)) {
                 vehicle.type = 'bus';
             }
             add_to_cache(vehicle, tables_to_update, cache);
