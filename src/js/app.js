@@ -22,15 +22,15 @@ function init_websocket(attempts=1) {
         websocket_connection.close();
         websocket_connection = null;
     }
-    if(attempts >= 2) {
-        const el = document.querySelector('body');
-        const alert = document.createElement('div');
-        alert.classList.add('alert', 'alert-danger', 'text-center', 'm-3');
-        alert.textContent = 'Услугата е временно недостъпна. Моля опитайте по-късно.';
-        el.innerHTML = '';
-        el.appendChild(alert);
-        return;
-    }
+    // if(attempts >= 2) {
+    //     const el = document.querySelector('body');
+    //     const alert = document.createElement('div');
+    //     alert.classList.add('alert', 'alert-danger', 'text-center', 'm-3');
+    //     alert.textContent = 'Услугата е временно недостъпна. Моля опитайте по-късно.';
+    //     el.innerHTML = '';
+    //     el.appendChild(alert);
+    //     return;
+    // }
     websocket_connection = new WebSocket(WEBSOCKET_URL);
     websocket_connection.onmessage = ev => {
         let data = JSON.parse(ev.data);
@@ -61,7 +61,7 @@ function init_websocket(attempts=1) {
         apply_filters();
     };
     websocket_connection.onerror = () => {
-        setTimeout(() => init_websocket(attempts + 1), 1000);
+        setTimeout(() => init_websocket(attempts + 1), 2500);
     }
 }
 
