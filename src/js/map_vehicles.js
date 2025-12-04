@@ -5,6 +5,7 @@ import { get_vehicle_model_name } from '/data/models';
 import { stops } from './map_stops';
 import { cache, zoom_to_vehicle } from './app';
 import { determine_time_ago } from './map';
+import { is_dark_theme } from './app';
 
 function generate_vehicle_popup_text(vehicle, cache) {
     const {
@@ -50,10 +51,10 @@ function generate_vehicle_popup_text(vehicle, cache) {
         first_row.appendChild(route_num_span);
         if(car) {
             first_row.appendChild(document.createTextNode(` / ${car}`));
-
+            const btn_main_class = is_dark_theme() ? 'btn-outline-light' : 'btn-outline-dark';
             if(car !== 1 && allCarsOnLine[0].car !== car) {
                 const prev_btn = document.createElement('button');
-                prev_btn.className = 'btn btn-sm btn-outline-dark mx-1';
+                prev_btn.className = `btn btn-sm ${btn_main_class} mx-1`;
                 const i = document.createElement('i');
                 i.className = 'bi bi-arrow-left';
                 prev_btn.appendChild(i);
@@ -68,7 +69,7 @@ function generate_vehicle_popup_text(vehicle, cache) {
 
             if(car !== totalCars) {
                 const next_btn = document.createElement('button');
-                next_btn.className = 'btn btn-sm btn-outline-dark mx-1';
+                next_btn.className = `btn btn-sm ${btn_main_class} mx-1`;
                 const i = document.createElement('i');
                 i.className = 'bi bi-arrow-right';
                 next_btn.appendChild(i);

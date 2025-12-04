@@ -270,7 +270,8 @@ function populate_route_table(relevant_vehicles, tbody, table_cell) {
     const btns = [];
     for(const vehicle of relevant_vehicles) {
         const btn = document.createElement('button');
-        btn.classList.add('vehicle-btn', 'btn', 'btn-outline-dark', 'btn-sm');
+        const btn_main_class = is_dark_theme() ? 'btn-outline-light' : 'btn-outline-dark';
+        btn.classList.add('vehicle-btn', 'btn', btn_main_class, 'btn-sm');
         btn.addEventListener('click', (e) => {
             zoom_to_vehicle(vehicle.cgm_id);
         });
@@ -282,7 +283,7 @@ function populate_route_table(relevant_vehicles, tbody, table_cell) {
         btn.setAttribute('data-cgm-id', vehicle.cgm_id);
         if(vehicle.is_unexpected) {
             btn.classList.add('btn-warning');
-            btn.classList.remove('btn-outline-dark');
+            btn.classList.remove(btn_main_class);
             btn.setAttribute('data-is-unexpected', 'true');
             tbody.setAttribute('data-unexpected', 'true');
         }
@@ -396,4 +397,46 @@ function init_settings() {
     const virtual_board_show_relative = get_setting('stop_time_style') === 'absolute';
     const check_el = document.querySelector('#virtual_board_show_relative');
     check_el.toggleAttribute('checked', virtual_board_show_relative);
+
+    const theme = get_setting('theme') || 'auto';
+    apply_theme(theme);
+    const theme_radios = document.querySelectorAll('input[name="theme"]');
+    theme_radios.forEach(radio => {
+        radio.toggleAttribute('checked', radio.value === theme);
+        radio.addEventListener('change', (e) => {
+            if(e.target.checked) {
+                set_setting('theme', e.target.value);
+                apply_theme(e.target.value);
+            }
+        });
+    });
+}
+
+function apply_theme(theme) {
+    const html_el = document.querySelector('html');
+    html_el.classList.remove('light-theme', 'dark-theme');
+    const affected_btns = document.querySelectorAll('.btn-outline-dark, .btn-outline-light');
+    let final_theme = theme;
+    if(theme === 'auto') {
+        const prefers_dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        final_theme = prefers_dark ? 'dark' : 'light';
+    }
+    html_el.setAttribute('data-bs-theme', final_theme);
+    affected_btns.forEach(btn => {
+        btn.classList.toggle('btn-outline-light', final_theme === 'dark');
+        btn.classList.toggle('btn-outline-dark', final_theme === 'light');
+    });
+}
+
+export function is_dark_theme() {
+    const theme = get_setting('theme');
+    if(theme === 'dark') {
+        return true;
+    }
+    else if(theme === 'light') {
+        return false;
+    }
+    else {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
 }
