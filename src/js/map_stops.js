@@ -173,9 +173,6 @@ window.refresh_stop_times = refresh_stop_times;
 
 function display_stop_times(stop_routes) {
     function display_hours(scheduled, actual) {
-        if(scheduled === null) {
-            return ['-', null];
-        }
         const total_diff = calculate_diff(scheduled, actual);
 
         const diff_class = 3 < total_diff || total_diff < -1 ? 'text-danger fw-bold' : 'text-success';
