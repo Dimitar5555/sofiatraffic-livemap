@@ -217,7 +217,10 @@ const models = {
                 [2501, 2505]
             ],
             extra_check: (vehicle) => {
-                return vehicle.cgm_id.startsWith('TB');
+                const inv_number = vehicle.inv_number;
+                const is_zemlyane = vehicle.cgm_id.startsWith('A') && 1010 <= inv_number && inv_number <= 1099;
+                const is_tramkar = vehicle.cgm_id.startsWith('TB') && 2501 <= inv_number && inv_number <= 2505;
+                return is_zemlyane || is_tramkar;
             },
             extras: ['ac', 'low_floor']
         },
