@@ -1053,7 +1053,7 @@ const expected_models_per_line = [
         models: [
             {
                 model: models.bus.man_lions_city_g,
-                depot: depots.druzhba
+                depot: depots.zemlyane_bus
             }
         ]
     },
