@@ -88,6 +88,10 @@ const expected_models_per_line = [
             {
                 model: models.tram.t8m_500_f,
                 depot: depots.banishora
+            },
+            {
+                model: models.tram.t8m_900_f,
+                depot: depots.banishora
             }
         ]
     },
@@ -127,7 +131,8 @@ const expected_models_per_line = [
         models: [
             {
                 model: models.tram.tatra_t6b5b,
-                depot: depots.iskar_tram
+                depot: depots.iskar_tram,
+                expected_carriages: 2
             }
         ]
     },
@@ -137,7 +142,8 @@ const expected_models_per_line = [
         models: [
             {
                 model: models.tram.tatra_t6b5b,
-                depot: depots.iskar_tram
+                depot: depots.iskar_tram,
+                is_composition: false
             }
         ]
     },
@@ -147,7 +153,8 @@ const expected_models_per_line = [
         models: [
             {
                 model: models.tram.tatra_t6a5,
-                depot: depots.iskar_tram
+                depot: depots.iskar_tram,
+                expected_carriages: 2
             }
         ]
     },
@@ -318,8 +325,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -348,8 +355,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: false
             }
         ]
     },
@@ -418,8 +425,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: false
             }
         ]
     },
@@ -428,8 +435,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -438,8 +445,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -448,8 +455,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -458,8 +465,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -468,8 +475,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_electric,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -478,8 +485,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -488,8 +495,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -498,8 +505,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -508,8 +515,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -518,8 +525,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -528,8 +535,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.bmc_procity,
-                depot: depots.mtk
+                depot: depots.mtk,
+                is_bendy: false
             }
         ]
     },
@@ -731,17 +738,16 @@ const expected_models_per_line = [
             }
         ]
     },
-    // TODO bus 77
-    // {
-    //     route_ref: 77,
-    //     type: 'bus',
-    //     models: [
-    //         {
-    //             model: models.bus.,
-    //             depot: depots.zemlyane_bus
-    //         }
-    //     ]
-    // },
+    {
+        route_ref: 77,
+        type: 'bus',
+        models: [
+            {
+                depot: depots.zemlyane_bus,
+                is_bendy: false
+            }
+        ]
+    },
     {
         route_ref: 78,
         type: 'bus',
@@ -749,6 +755,10 @@ const expected_models_per_line = [
             {
                 model: models.bus.man_sg262,
                 depot: depots.malashevtsi
+            },
+            {
+                depot: depots.malashevtsi,
+                is_bendy: true
             }
         ]
     },
@@ -759,6 +769,10 @@ const expected_models_per_line = [
             {
                 model: models.bus.man_sg262,
                 depot: depots.malashevtsi
+            },
+            {
+                depot: depots.malashevtsi,
+                is_bendy: true
             }
         ]
     },
@@ -777,8 +791,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_electric,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -797,8 +811,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: false
             }
         ]
     },
@@ -857,8 +871,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.malashevtsi
+                depot: depots.malashevtsi,
+                is_bendy: false
             }
         ]
     },
@@ -897,22 +911,21 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.karsan_ejest,
-                depot: depots.zemlyane_bus
+                depot: depots.zemlyane_bus,
+                is_bendy: false
             }
         ]
     },
-    // TODO bus 108
-    // {
-    //     route_ref: 108,
-    //     type: 'bus',
-    //     models: [
-    //         {
-    //             model: models.bus.,
-    //             depot: depots.zemlyane_bus
-    //         }
-    //     ]
-    // },
+    {
+        route_ref: 108,
+        type: 'bus',
+        models: [
+            {
+                depot: depots.zemlyane_bus,
+                is_bendy: false
+            }
+        ]
+    },
     {
         route_ref: 111,
         type: 'bus',
@@ -920,6 +933,10 @@ const expected_models_per_line = [
             {
                 model: models.bus.man_lions_city_g,
                 depot: depots.zemlyane_bus
+            },
+            {
+                depot: depots.zemlyane_bus,
+                is_bendy: false
             }
         ]
     },
@@ -1008,7 +1025,7 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
+                is_bendy: false,
                 depot: depots.zemlyane_bus
             }
         ]
@@ -1067,17 +1084,16 @@ const expected_models_per_line = [
             }
         ]
     },
-    // TODO bus 309
-    // {
-    //     route_ref: 309,
-    //     type: 'bus',
-    //     models: [
-    //         {
-    //             model: models.bus.,
-    //             depot: depots.
-    //         }
-    //     ]
-    // },
+    {
+        route_ref: 309,
+        type: 'bus',
+        models: [
+            {
+                depot: depots.zemlyane_bus,
+                is_bendy: false
+            }
+        ]
+    },
     {
         route_ref: 310,
         type: 'bus',
@@ -1103,12 +1119,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_cng,
-                depot: depots.druzhba
-            },
-            {
-                model: models.bus.bmc_procity,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: false
             }
         ]
     },
@@ -1117,8 +1129,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.man_lions_city_g,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: true
             }
         ]
     },
@@ -1127,8 +1139,8 @@ const expected_models_per_line = [
         type: 'bus',
         models: [
             {
-                model: models.bus.yutong_diesel,
-                depot: depots.druzhba
+                depot: depots.druzhba,
+                is_bendy: false
             }
         ]
     },
@@ -1186,6 +1198,7 @@ const expected_models_per_line = [
 
 export function is_vehicle_expected_on_line(vehicle) {
     let  { inv_number } = vehicle;
+    const carriages = typeof inv_number === 'string' ? inv_number.split('/').length : 1;
     const { type, route_ref } = vehicle;
     if(typeof inv_number === 'string') {
         inv_number = parseInt(inv_number.split('/')[0]);
@@ -1199,7 +1212,11 @@ export function is_vehicle_expected_on_line(vehicle) {
         return true;
     }
     const is_expected = line.models.some(expected => 
+        expected.model &&
         expected.model.id == model.id
-        && expected.depot.id == depot.id);
+        && expected.depot.id == depot.id
+        && (expected.carriages === undefined || expected.carriages === carriages)
+        || !expected.model && expected.depot.id === depot.id
+        && expected.is_bendy === (model.is_bendy ?? false));
     return is_expected;
 }

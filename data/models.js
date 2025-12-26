@@ -103,7 +103,8 @@ const models = {
             inv_number_ranges: [
                 2108,
                 2903
-            ]
+            ],
+            is_bendy: true
         },
         {
             id: 'ikarus',
@@ -114,7 +115,8 @@ const models = {
                 2703,
                 2913,
                 2915
-            ]
+            ],
+            is_bendy: true
         },
         {
             id: 'skoda_26tr',
@@ -133,7 +135,8 @@ const models = {
                 [1650, 1699],
                 [2675, 2699]
             ],
-            extras: ['ac', 'low_floor']
+            extras: ['ac', 'low_floor'],
+            is_bendy: true
         },
         {
             id: 'skoda_27tr_4',
@@ -142,7 +145,8 @@ const models = {
             inv_number_ranges: [
                 [2801, 2899]
             ],
-            extras: ['ac', 'low_floor']
+            extras: ['ac', 'low_floor'],
+            is_bendy: true
         }
     ],
     bus: [
@@ -158,7 +162,8 @@ const models = {
                 [2300, 2399],
                 [3100, 3199]
             ],
-            extras: ['ac', 'low_floor']
+            extras: ['ac', 'low_floor'],
+            is_bendy: true
         },
         {
             id: 'yutong_diesel',
@@ -199,7 +204,8 @@ const models = {
                 [1100, 1138],
                 [2161, 2172],
                 [3301, 3399]
-            ]
+            ],
+            is_bendy: true
         },
         {
             id: 'mb_conecto_lf',
@@ -271,7 +277,8 @@ const models = {
             name: 'MAN SG262',
             inv_number_ranges: [
                 [2135, 2160]
-            ]
+            ],
+            is_bendy: true
         },
         {
             id: 'mb_intouro',
@@ -294,7 +301,8 @@ const models = {
             name: 'Mercedes-Benz O345 G',
             inv_number_ranges: [
                 3592
-            ]
+            ],
+            is_bendy: true
         },
         {
             id: 'neoplan_dd',
