@@ -311,7 +311,18 @@ const models = {
             fuel: 'CNG',
             inv_number_ranges: [
                 7173,
-                7175
+                7175,
+                7177
+            ],
+            extras: ['ac', 'low_floor']
+        },
+        {
+            id: 'mb-conecto-III',
+            name: 'Mercedes-Benz Conecto III',
+            inv_number_ranges: [
+                7179,
+                7181,
+                7183
             ],
             extras: ['ac', 'low_floor']
         }
