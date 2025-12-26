@@ -178,15 +178,14 @@ function generate_vehicle_popup_text(vehicle, cache) {
 export function show_markers_in_view(map, vehicles_layer, cache) {
     const bounds = map.getBounds();
     for(const vehicle of cache) {
-        const marker = vehicle.marker;
-        if(!marker) {
+        if(!vehicle.marker || vehicle.hidden) {
             continue;
         }
         if(bounds.contains(vehicle.coords)) {
-            marker.addTo(vehicles_layer);
+            vehicle.marker.addTo(vehicles_layer);
         }
         else {
-            vehicles_layer._map.removeLayer(marker);
+            vehicles_layer._map.removeLayer(vehicle.marker);
         }
     }
 }
