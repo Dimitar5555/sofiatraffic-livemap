@@ -100,7 +100,7 @@ const expected_models_per_line = [
         type: 'tram',
         models: [
             {
-                model: models.tram.schindler,
+                model: models.tram.inekon,
                 depot: depots.banishora
             }
         ]
