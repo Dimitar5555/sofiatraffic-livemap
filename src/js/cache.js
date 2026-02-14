@@ -7,7 +7,7 @@ import { calculate_bearing, calculate_distance, proper_inv_number_for_sorting } 
 import { find_vehicle_in_cache } from './cache';
 
 function is_vehicle_in_depot(type, coords) {
-    return depots_data.some(depot => 
+    return depots_data.some(depot =>
         depot.polygon
         && (depot.type == type || depot.type.includes(type))
         && booleanPointInPolygon(coords, depot.polygon)
@@ -112,7 +112,7 @@ export function add_to_cache(new_vehicle, tables_to_update, cache) {
     // else if(new_vehicle.route_ref == '') {
     //     tables_to_update.add(`${vehicle.type}/null`);
     // }
-    
+
     if(!vehicle) {
         new_vehicle.hidden = false;
         cache.set(new_vehicle.cgm_id, new_vehicle);

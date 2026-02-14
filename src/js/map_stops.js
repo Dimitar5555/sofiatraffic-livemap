@@ -1,5 +1,5 @@
 import { routes, cache } from './app';
-import { occupancy_mappings, VIRTUAL_BOARD_URL, occupancy_mappings, BG_TYPES } from './config';
+import { occupancy_mappings, VIRTUAL_BOARD_URL, BG_TYPES } from './config';
 import { get_route_classes, calculate_diff } from './utils';
 import { determine_time_ago } from './map';
 import { get_vehicle_model, get_model_name } from '/data/models';
@@ -8,7 +8,7 @@ import { find_vehicle_in_cache } from './cache';
 export const stops = new Map();
 
 function is_metro_stop(stop_code){
-    return 2900 < Number(stop_code) && Number(stop_code) < 3400
+    return 2900 < Number(stop_code) && Number(stop_code) < 3400;
 }
 
 export function load_stops() {

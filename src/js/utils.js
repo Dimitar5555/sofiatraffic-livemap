@@ -8,34 +8,34 @@ export function calculate_bearing(old_coords, new_coords) {
     const [lat1, lon1] = old_coords;
     const [lat2, lon2] = new_coords;
 
-	if(lat1 == lat2 && lon1 == lon2) {
-		return null;
-	}
+    if(lat1 == lat2 && lon1 == lon2) {
+        return null;
+    }
 
-	/*
-		Using simple trigonometry to calculate bearing
-		between two points on the Earth's surface.
+    /*
+        Using simple trigonometry to calculate bearing
+        between two points on the Earth's surface.
 
-		Using Great-circle bearing formula is not necessary
-		and too expensive for this task.
+        Using Great-circle bearing formula is not necessary
+        and too expensive for this task.
 
-		The points are quite close to each other, so the
-		approximation is acceptable and the Earth's curvature
-		can be safely ignored.
-	*/
-	const deltaLat = lat2 - lat1;
+        The points are quite close to each other, so the
+        approximation is acceptable and the Earth's curvature
+        can be safely ignored.
+    */
+    const deltaLat = lat2 - lat1;
     const deltaLon = lon2 - lon1;
     const bearingRad = Math.atan2(deltaLon, deltaLat);
     const bearingDeg = toDegrees(bearingRad);
-	return ((bearingDeg + 180) % 360).toFixed(0);
+    return ((bearingDeg + 180) % 360).toFixed(0);
 }
 
 function toRadians(degrees) {
-	return degrees * (Math.PI / 180);
+    return degrees * (Math.PI / 180);
 }
 
 function toDegrees(radians) {
-	return radians * (180 / Math.PI);
+    return radians * (180 / Math.PI);
 }
 
 export function calculate_distance([lat1, lon1], [lat2, lon2]) {
@@ -43,18 +43,18 @@ export function calculate_distance([lat1, lon1], [lat2, lon2]) {
         return 0;
     }
 
-	const R = 6371e3; // Earth radius in meters
-	const φ1 = toRadians(lat1);
-	const φ2 = toRadians(lat2);
-	const Δφ = toRadians(lat2 - lat1);
-	const Δλ = toRadians(lon2 - lon1);
+    const R = 6371e3; // Earth radius in meters
+    const phi1 = toRadians(lat1);
+    const phi2 = toRadians(lat2);
+    const deltaPhi = toRadians(lat2 - lat1);
+    const deltaLambda = toRadians(lon2 - lon1);
   
-	const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-			  Math.cos(φ1) * Math.cos(φ2) *
-			  Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+              Math.cos(phi1) * Math.cos(phi2) *
+              Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   
-	return R * c; // in meters
+    return R * c; // in meters
 }
 
 export function proper_inv_number(inv_number) {

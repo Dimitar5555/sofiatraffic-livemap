@@ -17,7 +17,7 @@ export function init_map() {
         zoom: 15,
         zoomControl: false,
         maxBounds: [[42.9002, 23.0624], [42.5166, 23.6455]],
-        minZoom: 13,
+        minZoom: 13
     });
     map.invalidateSize();
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);

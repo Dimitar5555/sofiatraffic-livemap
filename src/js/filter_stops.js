@@ -31,7 +31,7 @@ window.update_stop_suggestions = function() {
         const stop = stops.get(code);
         const btn = document.createElement('button');
         btn.onclick = () => {
-                map.flyTo(stop.coords, 18, {animate: false});
+            map.flyTo(stop.coords, 18, {animate: false});
             setTimeout(() => {
                 stop.marker.fire('click');
                 if(is_screen_width_lg_or_less()) {
