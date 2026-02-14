@@ -128,3 +128,9 @@ html[data-bs-theme="dark"] .leaflet-container {
 	background: none;
 	border: none;
 }
+
+#stop-time-popover {
+    position-area: top center;
+    position-visibility: no-overflow;
+    text-wrap: nowrap;
+}

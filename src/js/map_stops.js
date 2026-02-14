@@ -186,6 +186,7 @@ function display_stop_times(stop_routes) {
 
     const tbody = document.createElement('tbody');
     let first_row = true;
+    let row_counter = 0;
     for(const route of stop_routes) {
         const row0 = document.createElement('tr');
         row0.classList.add('text-center', 'align-middle');
@@ -209,6 +210,7 @@ function display_stop_times(stop_routes) {
         const row = document.createElement('tr');
         row.classList.add('text-center', 'align-middle');
         {
+            let col_counter = 0;
             for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, cgm_vehicle_id, next_stop } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
@@ -236,12 +238,14 @@ function display_stop_times(stop_routes) {
 
                 popover_content = popover_content.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
-                const popover_btn = `<i popovertarget="stop-time-popover" onclick="document.querySelector('#stop-time-popover').innerHTML = decodeURI(this.dataset.popoverContent); document.querySelector('#stop-time-popover').showPopover();" data-popover-content='${popover_content}' class="bi bi-info-circle"></i>`;
-                td.innerHTML = `<span class="text-nowrap">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
+                const anchor_handle = `--stop-time-${row_counter}-${col_counter}`;
+                const popover_btn = `<i popovertarget="stop-time-popover" onclick="document.querySelector('#stop-time-popover').innerHTML = decodeURI(this.dataset.popoverContent); document.querySelector('#stop-time-popover').setAttribute('style', 'position-anchor: ${anchor_handle};'); document.querySelector('#stop-time-popover').showPopover();" data-popover-content='${popover_content}' class="bi bi-info-circle"></i>`;
+                td.innerHTML = `<span class="text-nowrap" style="anchor-name: ${anchor_handle}">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
                 if(first_row) {
                     td.classList.add('col-3');
                 }
                 row.appendChild(td);
+                col_counter += 1;
             }
             for(let i = route.times.length; i < 4; i++) {
                 const td = document.createElement('td');
@@ -255,6 +259,7 @@ function display_stop_times(stop_routes) {
         }
         tbody.appendChild(row0);
         tbody.appendChild(row);
+        row_counter += 1;
     }
     if(stop_routes.length == 0) {
         const row = document.createElement('tr');
