@@ -4,7 +4,6 @@ import { depots_data } from '/data/depots';
 
 import { MIN_ACTIVE_SPEED } from './config';
 import { calculate_bearing, calculate_distance, proper_inv_number_for_sorting } from './utils';
-import { find_vehicle_in_cache } from './cache';
 
 function is_vehicle_in_depot(type, coords) {
     return depots_data.some(depot =>
