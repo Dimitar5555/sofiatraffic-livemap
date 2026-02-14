@@ -3,6 +3,7 @@ import { occupancy_mappings, VIRTUAL_BOARD_URL, occupancy_mappings, BG_TYPES } f
 import { get_route_classes, calculate_diff } from './utils';
 import { determine_time_ago } from './map';
 import { get_vehicle_model, get_model_name } from '/data/models';
+import { find_vehicle_in_cache } from './cache';
 
 export const stops = new Map();
 
@@ -211,7 +212,7 @@ function display_stop_times(stop_routes) {
             for(const { actual_time, scheduled_time, occupancy: vehicle_occupancy, cgm_vehicle_id, next_stop } of route.times) {
                 const td = document.createElement('td');
                 const r = display_hours(scheduled_time, actual_time);
-                const vehicle = cache.find(v => v.cgm_id == cgm_vehicle_id);
+                const vehicle = find_vehicle_in_cache(cache, false, { cgm_id: cgm_vehicle_id });
                 const model = vehicle ? get_vehicle_model(vehicle) : null;
 
                 let popover_content = ``;

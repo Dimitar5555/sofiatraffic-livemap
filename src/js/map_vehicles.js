@@ -3,9 +3,10 @@ import { BG_TYPES_HTML, MIN_ACTIVE_SPEED, occupancy_mappings } from './config';
 import { proper_inv_number, get_route_classes, register_vehicle_view } from './utils';
 import { get_vehicle_model_name } from '/data/models';
 import { stops } from './map_stops';
-import { cache, zoom_to_vehicle } from './app';
+import { zoom_to_vehicle } from './app';
 import { determine_time_ago } from './map';
 import { is_dark_theme } from './app';
+import { find_vehicle_in_cache } from './cache';
 
 function generate_vehicle_popup_text(vehicle, cache) {
     const {
@@ -26,9 +27,8 @@ function generate_vehicle_popup_text(vehicle, cache) {
     const destinationStopName = destination_stop ? stops.get(destination_stop)?.names.bg : null;
     const modelText = get_vehicle_model_name(vehicle);
 
-    const allCarsOnLine = cache
-        .filter(v => v.type === type && v.route_ref === route_ref)
-        .sort((a, b) => a.car - b.car);
+    const allCarsOnLine = find_vehicle_in_cache(cache, true, { type, route_ref })
+    .sort((a, b) => a.car - b.car);
     const totalCars = allCarsOnLine.at(-1)?.car || 0;
 
 
@@ -177,7 +177,7 @@ function generate_vehicle_popup_text(vehicle, cache) {
 
 export function show_markers_in_view(map, vehicles_layer, cache) {
     const bounds = map.getBounds();
-    for(const vehicle of cache) {
+    for(const [_, vehicle] of cache) {
         if(!vehicle.marker || vehicle.hidden) {
             continue;
         }
@@ -287,7 +287,7 @@ function bind_popup_and_tooltip(e, vehicle, cache) {
 
 export function update_map_markers(cache, map) {
     // const now = Date.now() / 1000;
-    for(const vehicle of cache) {
+    for(const [key, vehicle] of cache.entries()) {
         // const time_diff = now - vehicle.timestamp;
         // if(time_diff > 30) {
         //     if(vehicle.marker) {
@@ -314,7 +314,7 @@ export function update_map_markers(cache, map) {
             .on('move', (e) => {
                 const popup = e.target.getPopup();
                 if(popup) {
-                    const vehicle = cache.find(v => v.marker == e.target);
+                    const vehicle = [...cache.values()].find(v => v.marker == e.target);
                     const popup_text = generate_vehicle_popup_text(vehicle, cache);
                     popup.setContent(popup_text);
                 }

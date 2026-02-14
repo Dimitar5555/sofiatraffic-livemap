@@ -6,7 +6,7 @@ import 'bootstrap/js/dist/collapse';
 import { depots_data, get_vehicle_depot } from '/data/depots';
 import { get_vehicle_model } from '/data/models';
 
-import { handle_tram_compositions, add_to_cache } from './cache';
+import { handle_tram_compositions, add_to_cache, find_vehicle_in_cache } from './cache';
 import { update_map_markers, show_markers_in_view } from './map_vehicles';
 import { WEBSOCKET_URL } from './config';
 import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, register_vehicle_view } from './utils';
@@ -15,7 +15,7 @@ import { init_map, map, vehicles_layer } from './map';
 import './filter_stops.js';
 
 var websocket_connection = null;
-export var cache = [];
+export var cache = new Map();
 
 function init_websocket(attempts=1) {
     if(websocket_connection !== null) {
@@ -309,7 +309,7 @@ export function is_screen_width_lg_or_less() {
 }
 
 export function zoom_to_vehicle(cgm_id) {
-    const vehicle = cache.find(v => v.cgm_id === cgm_id);
+    const vehicle = find_vehicle_in_cache(cache, false, { cgm_id });
     const marker = vehicle.marker;
     const vehicles_panel = document.querySelector('#vehicles-panel');
     if(is_screen_width_lg_or_less()) {
@@ -331,7 +331,8 @@ function update_route_tables(route_tables) {
             const tbody = document.querySelector(`#${type}_${route_ref}`);
             const vehicles_cell = tbody.querySelector('tr > td');
             const cgm_route_id = routes.find(route => route.type === type && route.route_ref === route_ref).cgm_id;
-            const relevant_vehicles = cache.filter(vehicle => vehicle.type === type && vehicle.cgm_route_id === cgm_route_id && vehicle.hidden !== true);
+            const relevant_vehicles = find_vehicle_in_cache(cache, true, { type, cgm_route_id })
+            .filter(vehicle => vehicle.hidden !== true);
             for(const v of relevant_vehicles) {
                 v.is_unexpected = !is_vehicle_expected_on_line(v);
             }
