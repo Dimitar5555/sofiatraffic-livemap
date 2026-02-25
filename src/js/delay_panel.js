@@ -21,7 +21,7 @@ export function update_delay_panel() {
     }))
     .filter((v) => vehicle_filter == 'all' || v.type == vehicle_filter)
     .filter((v) => delay_filter == 'all' || delay_filter == 'early' && v.delay < -1 || delay_filter == 'ontime' && -1 <= v.delay && v.delay <= 3 || delay_filter == 'late' && 3 < v.delay);
-    delays.sort((a, b) => b.delay - a.delay);
+    delays.sort((a, b) => delay_filter == 'early' ? a.delay - b.delay : b.delay - a.delay);
 
     const delay_table = document.querySelector('#delay_table');
     delay_table.innerHTML = '';
