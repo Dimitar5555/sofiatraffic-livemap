@@ -13,6 +13,7 @@ import { set_route_classes, proper_inv_number, proper_inv_number_for_sorting, re
 import { is_vehicle_expected_on_line } from '/data/expected_models';
 import { init_map, map, vehicles_layer } from './map';
 import './filter_stops.js';
+import { update_delay_panel } from './delay_panel.js';
 
 var websocket_connection = null;
 export var cache = new Map();
@@ -61,6 +62,7 @@ function init_websocket(attempts=1) {
         show_markers_in_view(map, vehicles_layer, cache);
         console.timeEnd('update cache');
         update_route_tables(tables_to_update);
+        update_delay_panel();
         apply_filters();
     };
     websocket_connection.onerror = () => {
@@ -319,6 +321,7 @@ export function zoom_to_vehicle(cgm_id) {
     marker.fireEvent('click');
     register_vehicle_view(vehicle.type, vehicle.inv_number);
 }
+window.zoom_to_vehicle = zoom_to_vehicle;
 
 function update_route_tables(route_tables) {
     for(const table of route_tables) {

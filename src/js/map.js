@@ -23,6 +23,7 @@ export function init_map() {
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
     L.control.openVehiclesPanel({ position: 'topleft' }).addTo(map);
     L.control.openStopsPanel({ position: 'topleft' }).addTo(map);
+    L.control.openDelayPanel({ position: 'topleft' }).addTo(map);
     L.control.openInfoPanel({ position: 'topleft' }).addTo(map);
     L.control.openSettingsPanel({ position: 'topleft' }).addTo(map);
     L.control.zoom({
@@ -104,9 +105,11 @@ function create_panel_control(icon_class, panel_selector) {
 L.Control.OpenInfoPanel = create_panel_control('bi bi-info-lg fs-3', '#info-panel');
 L.Control.OpenVehiclesPanel = create_panel_control('bi bi-bus-front-fill fs-4', '#vehicles-panel');
 L.Control.OpenStopsPanel = create_panel_control('bi bi-menu-button-wide fs-4', '#stops-panel');
+L.Control.OpenDelayPanel = create_panel_control('bi bi-clock-fill fs-4', '#delay-panel');
 L.Control.OpenSettingsPanel = create_panel_control('bi bi-gear-fill fs-4', '#settings-panel');
 
 L.control.openInfoPanel = opts => new L.Control.OpenInfoPanel(opts);
 L.control.openVehiclesPanel = opts => new L.Control.OpenVehiclesPanel(opts);
 L.control.openStopsPanel = opts => new L.Control.OpenStopsPanel(opts);
+L.control.openDelayPanel = opts => new L.Control.OpenDelayPanel(opts);
 L.control.openSettingsPanel = opts => new L.Control.OpenSettingsPanel(opts);

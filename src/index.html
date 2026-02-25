@@ -87,6 +87,38 @@
             </label>
         </p>
     </div>
+    <div id="delay-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2 pe-3">
+        <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
+            &lt;
+        </button>
+        <h3>Закъснения</h3>
+        <label>Тип</label>
+        <select id="delay_type_filter" onchange="update_delay_panel()" class="form-control form-control-sm mb-2">
+            <option value="late">Закъснели</option>
+            <option value="ontime">Навреме</option>
+            <option value="early">Избързали</option>
+            <option value="all">Всички</option>
+        </select>
+        <label>Вид</label>
+        <select id="delay_vehicle_type_filter" onchange="update_delay_panel()" class="form-control form-control-sm mb-2">
+            <option value="all">Всички</option>
+            <option value="tram">Трамваи</option>
+            <option value="trolley">Тролеи</option>
+            <option value="bus">Автобуси</option>
+        </select>
+        <div class="table-container">
+            <table class="table table-sm table-bordered overflow-auto text-center align-middle">
+                <thead>
+                    <tr>
+                        <th>Линия</th>
+                        <th>Инв. номер</th>
+                        <th>Закъснение</th>
+                    </tr>
+                </thead>
+                <tbody id="delay_table"></tbody>
+            </table>
+        </div>
+    </div>
     <div id="settings-panel" class="panel position-absolute h-100 d-flex flex-column d-none p-2">
         <button class="btn btn-outline-secondary float-end fw-bolder fs-3 lh-1" onclick="this.parentElement.classList.add('d-none')">
             &lt;
