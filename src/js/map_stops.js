@@ -239,7 +239,7 @@ function display_stop_times(stop_routes) {
                 popover_content = popover_content.replace(/'/g, "&apos;").replace(/"/g, "&quot;");
 
                 const anchor_handle = `--stop-time-${row_counter}-${col_counter}`;
-                const popover_btn = `<i popovertarget="stop-time-popover" onclick="document.querySelector('#stop-time-popover').innerHTML = decodeURI(this.dataset.popoverContent); document.querySelector('#stop-time-popover').setAttribute('style', 'position-anchor: ${anchor_handle};'); document.querySelector('#stop-time-popover').showPopover();" data-popover-content='${popover_content}' class="bi bi-info-circle"></i>`;
+                const popover_btn = `<button popovertarget="stop-time-popover" popovertargetaction="show" onclick="let el = document.querySelector('#stop-time-popover'); let content = decodeURI(this.dataset.popoverContent); if(el.innerHTML != content) { el.innerHTML = content; } document.querySelector('#stop-time-popover').setAttribute('style', 'position-anchor: ${anchor_handle};');" data-popover-content='${popover_content}'><i class="bi bi-info-circle"></i></button>`;
                 td.innerHTML = `<span class="text-nowrap" style="anchor-name: ${anchor_handle}">${r[0]} ${r[0] != '-' ? popover_btn : ''}</span><br>${r[1] ? r[1] : ''}`;
                 if(first_row) {
                     td.classList.add('col-3');
