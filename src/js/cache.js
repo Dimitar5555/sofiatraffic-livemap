@@ -115,6 +115,7 @@ export function add_to_cache(new_vehicle, tables_to_update, cache) {
     if(!vehicle) {
         new_vehicle.hidden = false;
         cache.set(new_vehicle.cgm_id, new_vehicle);
+        tables_to_update.add(`${new_vehicle.type}/${new_vehicle.route_ref || 'null'}`);
     }
     else {
         const old_coords = vehicle.coords;
