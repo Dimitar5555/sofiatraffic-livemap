@@ -246,12 +246,19 @@ function display_stop_times(stop_routes) {
                 }
                 row.appendChild(td);
                 col_counter += 1;
+                if(col_counter == 4) {
+                    td.classList.add('d-none', 'd-md-table-cell');
+                }
             }
-            for(let i = route.times.length; i < 4; i++) {
+            for(; col_counter < 4; col_counter++) {
                 const td = document.createElement('td');
                 td.textContent = '-';
                 if(first_row) {
                     td.classList.add('col-3');
+                }
+                col_counter += 1;
+                if(col_counter == 4) {
+                    td.classList.add('d-none', 'd-md-table-cell');
                 }
                 row.appendChild(td);
             }
