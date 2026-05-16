@@ -165,6 +165,34 @@ function init_routes_tables() {
     .then(data => data.json())
     .then(r => {
         routes = r.filter(route => route.type != 'metro');
+        for(const route of routes) {
+            if(route.route_ref.startsWith('N')) {
+                route.subtype = 'night';
+            }
+            if(route.route_ref.startsWith('M') || route.route_ref.endsWith('TM') || route.route_ref.endsWith('TB')) {
+                route.subtype = 'temporary';
+            }
+            if(route.route_ref.startsWith('У')) {
+                route.subtype = 'school';
+            }
+        }
+        const main_types = ['tram', 'trolley', 'bus'];
+        const subtypes = ['night', 'temporary', 'school'];
+        routes.sort((a, b) => {
+            const a_type_index = main_types.indexOf(a.type);
+            const b_type_index = main_types.indexOf(b.type);
+            if(a_type_index !== b_type_index) {
+                return a_type_index - b_type_index;
+            }
+            const a_subtype_index = subtypes.indexOf(a.subtype) || 0;
+            const b_subtype_index = subtypes.indexOf(b.subtype) || 0;
+            if(a_subtype_index !== b_subtype_index) {
+                return a_subtype_index - b_subtype_index;
+            }
+            const a_route_ref = a.route_ref.replace(/\D/g, '') || '';
+            const b_route_ref = b.route_ref.replace(/\D/g, '') || '';
+            return a_route_ref.localeCompare(b_route_ref, undefined, { numeric: true });
+        });
         for(const type of ['bus', 'trolley', 'tram']) {
             const last_index = routes.findLastIndex(route => route.type == type);
             routes.splice(last_index+1, 0, {type: type, route_ref: null, cgm_id: null});
