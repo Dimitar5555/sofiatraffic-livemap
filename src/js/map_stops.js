@@ -8,7 +8,7 @@ import { find_vehicle_in_cache } from './cache';
 export const stops = new Map();
 
 function is_metro_stop(stop_code){
-    return 2900 < Number(stop_code) && Number(stop_code) < 3400;
+    return stop_code.startsWith('M');
 }
 
 export function load_stops() {
