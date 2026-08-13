@@ -3,7 +3,7 @@ import { get_setting } from './app.js';
 export const MERGE_TRAM_COMPONENTS = true;
 export const MIN_ACTIVE_SPEED = 3;
 // const base_url = '://127.0.0.1:4000';
-const base_url = 's://sofiatraffic-proxy.onrender.com';
+const base_url = 's://sft-proxy.onrender.com';
 const livemap_urls = {
     'avl': `ws${base_url}/livemap/`,
     'gtfs': `ws${base_url}/v2/livemap/`,
